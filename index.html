@@ -423,20 +423,48 @@
         let isRunning = false;
         let currentSubjectTimer = null;
         
-        // Matérias iniciais padrão
-        const defaultSubjects = [
-            { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Biologia", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Português", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" },
-            { name: "Química", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Física", duration: "1h🔥 Pesado", badge: "Alta", badgeClass: "badge-high" },
-            { name: "História", duration: "45min✨ Leve", badge: "Média", badgeClass: "badge-medium" },
-            { name: "Geografia", duration: "45min✨ Leve", badge: "Média", badgeClass: "badge-medium" },
-            { name: "Redação", duration: "1h30🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Revisão", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" },
-            { name: "Humanas", duration: "1h✨ Leve", badge: "Média", badgeClass: "badge-medium" },
-            { name: "Revisão Geral", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" }
-        ];
+        // Cronograma Medicina (Baseado no PDF)
+        const medicinaSchedule = {
+            seg: [
+                { name: "Matemática", duration: "🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+                { name: "Biologia", duration: "🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+                { name: "Português", duration: "✨ Interpretação", badge: "Alta", badgeClass: "badge-high" }
+            ],
+            ter: [
+                { name: "Química", duration: "🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+                { name: "Física", duration: "🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+                { name: "Matemática", duration: "📝 Questões", badge: "Alta", badgeClass: "badge-high" }
+            ],
+            qua: [
+                { name: "História", duration: "📚 Teoria", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Geografia", duration: "📚 Teoria", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Matemática", duration: "✨ Leve", badge: "Média", badgeClass: "badge-medium" }
+            ],
+            qui: [
+                { name: "Redação", duration: "✍️ Curso", badge: "Crítica", badgeClass: "badge-critical" },
+                { name: "Física", duration: "✨ Leve", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Biologia", duration: "✨ Leve", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Filosofia", duration: "⏱️ 30 min", badge: "Média", badgeClass: "badge-medium" }
+            ],
+            sex: [
+                { name: "Química", duration: "📚 Teoria", badge: "Alta", badgeClass: "badge-high" },
+                { name: "Matemática", duration: "🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+                { name: "Sociologia", duration: "⏱️ 30 min", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Revisão", duration: "🔄 Semanal", badge: "Alta", badgeClass: "badge-high" }
+            ],
+            sab: [
+                { name: "Matemática", duration: "⏱️ 1h30", badge: "Alta", badgeClass: "badge-high" },
+                { name: "Biologia", duration: "⏱️ 1h30", badge: "Alta", badgeClass: "badge-high" },
+                { name: "Química", duration: "⏱️ 1h", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Física", duration: "⏱️ 1h", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Questões", duration: "📝 Prática", badge: "Alta", badgeClass: "badge-high" }
+            ],
+            dom: [
+                { name: "Redação", duration: "✍️ Prática", badge: "Crítica", badgeClass: "badge-critical" },
+                { name: "Humanas", duration: "✨ Leve", badge: "Média", badgeClass: "badge-medium" },
+                { name: "Revisão Geral", duration: "🔄 Completa", badge: "Alta", badgeClass: "badge-high" }
+            ]
+        };
         
         const defaultDays = {
             seg: { name: "SEG", fullName: "Segunda", tasks: [] },
@@ -457,21 +485,15 @@
             return `${year}-W${weekNum}`;
         }
         
-        function distributeSubjects(days) {
-            const subjectsCopy = [...defaultSubjects];
+        function initializeSchedule(days) {
             for (const day in days) {
-                days[day].tasks = [];
-                for (let i = 0; i < 3; i++) {
-                    if (subjectsCopy.length) {
-                        const subj = subjectsCopy.shift();
-                        days[day].tasks.push({
-                            ...subj,
-                            completed: false,
-                            topic: "",
-                            hoursStudied: 0
-                        });
-                    }
-                }
+                const tasks = medicinaSchedule[day] || [];
+                days[day].tasks = tasks.map(t => ({
+                    ...t,
+                    completed: false,
+                    topic: "",
+                    hoursStudied: 0
+                }));
             }
             return days;
         }
@@ -500,14 +522,11 @@
         
         function loadUserData() {
             if (!currentUser) return false;
-            
             const loadedLocal = loadFromLocal();
-            
             if (!loadedLocal) {
-                currentWeekData = distributeSubjects(JSON.parse(JSON.stringify(defaultDays)));
+                currentWeekData = initializeSchedule(JSON.parse(JSON.stringify(defaultDays)));
                 saveToLocal();
             }
-            
             renderGrid();
             updateTimeMetrics();
             calculateProgress();
@@ -534,7 +553,6 @@
                     if (userName) users.add(userName);
                 }
             }
-            
             const ranking = [];
             for (const user of users) {
                 let totalHours = 0;
@@ -553,9 +571,7 @@
                 }
                 ranking.push({ name: user, hours: totalHours });
             }
-            
             ranking.sort((a,b) => b.hours - a.hours);
-            
             const rankingList = document.getElementById("rankingList");
             if (ranking.length === 0) {
                 rankingList.innerHTML = '<div class="loading">Nenhum usuário cadastrado ainda</div>';
@@ -572,13 +588,11 @@
         function addSubject(dayKey) {
             const newSubjectName = prompt("Digite o nome da nova matéria:");
             if (!newSubjectName) return;
-            
             const duration = prompt("Duração (ex: 1h🔥 Pesado):", "1h✨ Leve");
             const badge = prompt("Prioridade (Crítica/Alta/Média):", "Média");
             let badgeClass = "badge-medium";
             if (badge === "Crítica") badgeClass = "badge-critical";
             else if (badge === "Alta") badgeClass = "badge-high";
-            
             currentWeekData[dayKey].tasks.push({
                 name: newSubjectName,
                 duration: duration,
@@ -588,7 +602,6 @@
                 topic: "",
                 hoursStudied: 0
             });
-            
             saveData();
             renderGrid();
         }
@@ -635,10 +648,8 @@
             const today = new Date().getDay();
             const daysMap = {0:"dom",1:"seg",2:"ter",3:"qua",4:"qui",5:"sex",6:"sab"};
             const todayKey = daysMap[today];
-            
             let todayHours = 0;
             let weekHours = 0;
-            
             if (currentWeekData) {
                 for (const day in currentWeekData) {
                     let dayHours = 0;
@@ -649,7 +660,6 @@
                     if (day === todayKey) todayHours = dayHours;
                 }
             }
-            
             document.getElementById("todayTime").innerHTML = `${todayHours.toFixed(1)}h`;
             document.getElementById("weeklyTime").innerHTML = `${weekHours.toFixed(1)}h`;
         }
@@ -671,17 +681,15 @@
         
         function renderGrid() {
             const grid = document.getElementById("weeklyGrid");
-            if (!currentWeekData) {
+            if (!currentWeekData || !currentWeekData.seg) {
                 grid.innerHTML = '<div class="loading">Faça login para começar</div>';
                 return;
             }
             grid.innerHTML = "";
-            
             for (const [dayKey, day] of Object.entries(currentWeekData)) {
                 const completedCount = day.tasks.filter(t => t.completed).length;
                 const dayCard = document.createElement("div");
                 dayCard.className = "day-card";
-                
                 dayCard.innerHTML = `
                     <div class="day-header">
                         <span class="day-name">${day.name}</span>
@@ -725,7 +733,6 @@
                     renderGrid();
                 });
             });
-            
             document.querySelectorAll('[data-timer]').forEach(nameSpan => {
                 nameSpan.addEventListener('click', function() {
                     const day = this.dataset.day;
@@ -734,7 +741,6 @@
                     startTimer();
                 });
             });
-            
             document.querySelectorAll('[data-delete]').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -743,7 +749,6 @@
                     deleteSubject(day, idx);
                 });
             });
-            
             document.querySelectorAll('[data-hours]').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
@@ -753,14 +758,12 @@
                     addHoursToSubject(day, idx, hours);
                 });
             });
-            
             document.querySelectorAll('.add-subject-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const day = this.dataset.day;
                     addSubject(day);
                 });
             });
-            
             document.querySelectorAll('.task-topic').forEach(topicDiv => {
                 topicDiv.addEventListener('click', function() {
                     const day = this.dataset.day;
@@ -787,7 +790,6 @@
             });
         }
         
-        // Timer functions
         function updateTimerDisplay() {
             const hours = Math.floor(timerSeconds / 3600);
             const minutes = Math.floor((timerSeconds % 3600) / 60);
@@ -829,12 +831,7 @@
         
         function resetWeek() {
             if (confirm("Resetar todo o progresso da semana? Isso vai zerar horas e conclusões.")) {
-                for (const day in currentWeekData) {
-                    for (const task of currentWeekData[day].tasks) {
-                        task.completed = false;
-                        task.hoursStudied = 0;
-                    }
-                }
+                currentWeekData = initializeSchedule(JSON.parse(JSON.stringify(defaultDays)));
                 saveData();
                 renderGrid();
                 updateRanking();
@@ -850,21 +847,18 @@
             currentUser = name;
             document.getElementById("currentUserDisplay").innerHTML = `👤 Usuário: ${name}`;
             document.getElementById("rankingSection").style.display = "block";
-            
             loadUserData();
             updateRanking();
             renderGrid();
             localStorage.setItem("lastUser", name);
         }
         
-        // Event listeners
         document.getElementById("loginBtn").addEventListener("click", login);
         document.getElementById("startTimerBtn").addEventListener("click", startTimer);
         document.getElementById("pauseTimerBtn").addEventListener("click", pauseTimer);
         document.getElementById("resetTimerBtn").addEventListener("click", resetTimer);
         document.getElementById("resetBtn").addEventListener("click", resetWeek);
         
-        // Verificar se já tem usuário no localStorage
         const savedUser = localStorage.getItem("lastUser");
         if (savedUser) {
             document.getElementById("userNameInput").value = savedUser;
