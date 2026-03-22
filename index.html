@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM - Modo Claro/Escuro/Auto</title>
+    <title>Planner ENEM - Ranking em Tempo Real</title>
     <style>
         * {
             margin: 0;
@@ -11,7 +11,6 @@
             box-sizing: border-box;
         }
 
-        /* Temas - definidos como classes */
         body.theme-dark {
             --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             --card-bg: rgba(255,255,255,0.1);
@@ -52,7 +51,6 @@
             margin: 0 auto;
         }
 
-        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -102,7 +100,6 @@
         .theme-btn.active {
             background: var(--accent);
             color: white;
-            box-shadow: 0 0 10px rgba(230,57,70,0.3);
         }
 
         .focus-btn {
@@ -113,15 +110,8 @@
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s;
         }
 
-        .focus-btn:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-        }
-
-        /* User Section */
         .user-section {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -153,10 +143,6 @@
             outline: none;
         }
 
-        .user-info input::placeholder {
-            color: var(--text-secondary);
-        }
-
         .user-info button {
             padding: 12px 25px;
             border-radius: 30px;
@@ -168,10 +154,6 @@
             transition: transform 0.2s;
         }
 
-        .user-info button:hover {
-            transform: scale(1.02);
-        }
-
         .current-user {
             font-size: 1.1rem;
             background: var(--task-bg);
@@ -179,7 +161,6 @@
             border-radius: 30px;
         }
 
-        /* Ranking */
         .ranking-section {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -189,16 +170,44 @@
             border: 1px solid var(--border);
         }
 
-        .ranking-section h3 {
+        .ranking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .ranking-header h3 {
             color: var(--accent-secondary);
+        }
+
+        .live-badge {
+            font-size: 0.7rem;
+            background: #2ecc71;
+            padding: 4px 10px;
+            border-radius: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .last-update {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            text-align: center;
         }
 
         .ranking-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 250px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
@@ -217,7 +226,6 @@
             transform: translateX(5px);
         }
 
-        /* Timer Section */
         .timer-section {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -258,10 +266,6 @@
             transition: transform 0.2s;
         }
 
-        .timer-btn:hover {
-            transform: scale(1.05);
-        }
-
         .timer-btn.start { background: #2ecc71; color: white; }
         .timer-btn.pause { background: #f39c12; color: white; }
         .timer-btn.reset { background: #e74c3c; color: white; }
@@ -273,7 +277,6 @@
             font-weight: bold;
         }
 
-        /* Metrics */
         .metrics {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -321,7 +324,6 @@
             transition: width 0.3s ease;
         }
 
-        /* Weekly Grid */
         .weekly-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -433,11 +435,6 @@
             border-radius: 12px;
             cursor: pointer;
             font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-
-        .add-subject-btn:hover {
-            background: var(--hover-bg);
         }
 
         .reset-btn {
@@ -450,12 +447,6 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s;
-        }
-
-        .reset-btn:hover {
-            transform: scale(1.02);
-            filter: brightness(1.1);
         }
 
         .motivation {
@@ -473,7 +464,6 @@
             color: var(--accent-secondary);
         }
 
-        /* Modo Foco */
         body.focus-mode .ranking-section,
         body.focus-mode .motivation,
         body.focus-mode .metrics {
@@ -484,7 +474,6 @@
             grid-template-columns: 1fr;
         }
 
-        /* Responsivo */
         @media (max-width: 1024px) {
             .weekly-grid { grid-template-columns: repeat(4, 1fr); }
         }
@@ -494,17 +483,15 @@
             .timer-display { font-size: 2rem; letter-spacing: 2px; }
             .user-section { flex-direction: column; text-align: center; }
             .navbar { flex-direction: column; text-align: center; }
-            .metric-card .value { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Navbar com temas -->
         <div class="navbar">
             <div class="logo">
                 <h1>📚 Planner ENEM Medicina</h1>
-                <div class="subtitle" style="font-size: 0.8rem; color: var(--text-secondary);">Timer • Ranking • Temas</div>
+                <div class="subtitle" style="font-size: 0.8rem; color: var(--text-secondary);">Timer • Ranking em Tempo Real • Temas</div>
             </div>
             <div class="theme-selector">
                 <button class="theme-btn" data-theme="dark">🌙 Escuro</button>
@@ -514,7 +501,6 @@
             </div>
         </div>
 
-        <!-- User Section -->
         <div class="user-section">
             <div class="user-info">
                 <input type="text" id="userNameInput" placeholder="Seu nome">
@@ -523,15 +509,17 @@
             <div class="current-user" id="currentUserDisplay">Nenhum usuário logado</div>
         </div>
 
-        <!-- Ranking Section -->
         <div class="ranking-section" id="rankingSection" style="display: none;">
-            <h3>🏆 Ranking Global - Horas de Estudo</h3>
+            <div class="ranking-header">
+                <h3>🏆 Ranking Global - Horas de Estudo</h3>
+                <span class="live-badge">🔴 AO VIVO</span>
+            </div>
             <div class="ranking-list" id="rankingList">
                 <div class="loading">Carregando ranking...</div>
             </div>
+            <div class="last-update" id="lastUpdateTime">Atualizando automaticamente...</div>
         </div>
 
-        <!-- Timer Section -->
         <div class="timer-section">
             <h3>⏱️ Timer de Estudo</h3>
             <div class="timer-display" id="timerDisplay">00:00:00</div>
@@ -544,7 +532,6 @@
             <div style="font-size: 0.7rem; margin-top: 10px; color: var(--text-secondary);">💡 Dica: Clique no nome da matéria para vincular o timer</div>
         </div>
 
-        <!-- Metrics -->
         <div class="metrics">
             <div class="metric-card">
                 <h3>🎯 Progresso Semanal</h3>
@@ -563,7 +550,6 @@
             </div>
         </div>
 
-        <!-- Weekly Grid -->
         <div class="weekly-grid" id="weeklyGrid">
             <div class="loading">Faça login para começar</div>
         </div>
@@ -590,10 +576,7 @@
             } else {
                 localStorage.setItem('userTheme', theme);
             }
-            
             document.body.className = `theme-${appliedTheme}`;
-            
-            // Atualizar botões ativos
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 if (btn.dataset.theme === theme) {
                     btn.classList.add('active');
@@ -603,25 +586,19 @@
             });
         }
 
-        // Detectar mudança no tema do sistema (para modo automático)
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            const savedTheme = localStorage.getItem('userTheme');
-            if (savedTheme === 'auto') {
-                const newTheme = e.matches ? 'dark' : 'light';
-                document.body.className = `theme-${newTheme}`;
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            if (localStorage.getItem('userTheme') === 'auto') {
+                setTheme('auto');
             }
         });
 
-        // Carregar tema salvo
         const savedUserTheme = localStorage.getItem('userTheme') || 'dark';
         setTheme(savedUserTheme);
 
-        // Eventos dos botões de tema
         document.querySelectorAll('[data-theme]').forEach(btn => {
             btn.addEventListener('click', () => setTheme(btn.dataset.theme));
         });
 
-        // Modo Foco
         let focusMode = false;
         document.getElementById('focusModeBtn').addEventListener('click', () => {
             focusMode = !focusMode;
@@ -643,6 +620,9 @@
         let timerSeconds = 0;
         let isRunning = false;
         let currentSubjectTimer = null;
+        
+        // Intervalo para atualizar ranking em tempo real
+        let rankingInterval = null;
         
         const defaultSubjects = [
             { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
@@ -701,6 +681,8 @@
                 const key = `planner_${currentUser}_${currentWeekId}`;
                 localStorage.setItem(key, JSON.stringify(currentWeekData));
                 localStorage.setItem(`lastUser`, currentUser);
+                // Disparar evento de atualização para outros usuários (via localStorage)
+                localStorage.setItem('ranking_update', Date.now().toString());
             }
         }
         
@@ -780,6 +762,20 @@
                     </div>
                 `).join("");
             }
+            
+            // Atualizar hora da última atualização
+            const now = new Date();
+            document.getElementById("lastUpdateTime").innerHTML = `🔄 Atualizado: ${now.toLocaleTimeString()}`;
+        }
+        
+        // Iniciar atualização automática do ranking a cada 3 segundos
+        function startAutoRanking() {
+            if (rankingInterval) clearInterval(rankingInterval);
+            rankingInterval = setInterval(() => {
+                if (currentUser) {
+                    updateRanking();
+                }
+            }, 3000);
         }
         
         function addSubject(dayKey) {
@@ -986,7 +982,6 @@
             });
         }
         
-        // Timer functions
         function updateTimerDisplay() {
             const hours = Math.floor(timerSeconds / 3600);
             const minutes = Math.floor((timerSeconds % 3600) / 60);
@@ -1054,16 +1049,27 @@
             updateRanking();
             renderGrid();
             localStorage.setItem("lastUser", name);
+            
+            // Iniciar atualização automática do ranking
+            startAutoRanking();
         }
         
-        // Event listeners
+        // Detectar mudanças no localStorage de outras abas/usuários
+        window.addEventListener('storage', (e) => {
+            if (e.key && e.key.startsWith('planner_') && currentUser) {
+                updateRanking();
+            }
+            if (e.key === 'ranking_update' && currentUser) {
+                updateRanking();
+            }
+        });
+        
         document.getElementById("loginBtn").addEventListener("click", login);
         document.getElementById("startTimerBtn").addEventListener("click", startTimer);
         document.getElementById("pauseTimerBtn").addEventListener("click", pauseTimer);
         document.getElementById("resetTimerBtn").addEventListener("click", resetTimer);
         document.getElementById("resetBtn").addEventListener("click", resetWeek);
         
-        // Verificar se já tem usuário no localStorage
         const savedUser = localStorage.getItem("lastUser");
         if (savedUser) {
             document.getElementById("userNameInput").value = savedUser;
