@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM - Ranking em Tempo Real</title>
+    <title>Planner ENEM - Ranking Sincronizado</title>
     <style>
         * {
             margin: 0;
@@ -84,20 +84,13 @@
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
             background: var(--input-bg);
             color: var(--text-primary);
-            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .theme-btn:hover {
             transform: scale(1.05);
-            background: var(--accent);
-            color: white;
-        }
-
-        .theme-btn.active {
             background: var(--accent);
             color: white;
         }
@@ -109,7 +102,6 @@
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            font-weight: bold;
         }
 
         .user-section {
@@ -151,7 +143,6 @@
             color: white;
             cursor: pointer;
             font-weight: bold;
-            transition: transform 0.2s;
         }
 
         .current-user {
@@ -196,13 +187,6 @@
             100% { opacity: 0.6; }
         }
 
-        .last-update {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-top: 10px;
-            text-align: center;
-        }
-
         .ranking-list {
             display: flex;
             flex-direction: column;
@@ -224,6 +208,13 @@
         .ranking-item:hover {
             background: var(--hover-bg);
             transform: translateX(5px);
+        }
+
+        .last-update {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 10px;
+            color: var(--text-secondary);
         }
 
         .timer-section {
@@ -263,7 +254,6 @@
             border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
-            transition: transform 0.2s;
         }
 
         .timer-btn.start { background: #2ecc71; color: white; }
@@ -291,11 +281,6 @@
             padding: 20px;
             text-align: center;
             border: 1px solid var(--border);
-            transition: transform 0.2s;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-3px);
         }
 
         .metric-card h3 {
@@ -339,11 +324,6 @@
             padding: 15px;
             min-width: 260px;
             border: 1px solid var(--border);
-            transition: transform 0.2s;
-        }
-
-        .day-card:hover {
-            transform: translateY(-5px);
         }
 
         .day-header {
@@ -362,10 +342,12 @@
             border-radius: 12px;
             padding: 10px;
             margin-bottom: 10px;
-            transition: all 0.2s;
         }
 
-        .task-item.completed { opacity: 0.7; background: rgba(46,204,113,0.2); border-left: 3px solid #2ecc71; }
+        .task-item.completed {
+            background: rgba(46,204,113,0.2);
+            border-left: 3px solid #2ecc71;
+        }
 
         .task-header {
             display: flex;
@@ -376,8 +358,7 @@
         }
 
         .task-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #2ecc71; }
-        .task-name { font-weight: bold; cursor: pointer; flex: 1; transition: color 0.2s; }
-        .task-name:hover { color: var(--accent-secondary); }
+        .task-name { font-weight: bold; cursor: pointer; flex: 1; }
         .task-duration { font-size: 0.7rem; background: var(--task-bg); padding: 2px 8px; border-radius: 12px; }
 
         .badge {
@@ -405,24 +386,14 @@
             padding: 3px 10px;
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .hours-studied button:hover {
-            background: var(--accent);
         }
 
         .task-topic {
             font-size: 0.7rem;
             color: var(--text-secondary);
             cursor: pointer;
-            margin-top: 8px;
+            margin-top: 5px;
             padding: 4px;
-            border-radius: 8px;
-        }
-
-        .task-topic:hover {
-            background: var(--hover-bg);
         }
 
         .add-subject-btn {
@@ -446,7 +417,6 @@
             padding: 12px 30px;
             border-radius: 30px;
             cursor: pointer;
-            font-weight: bold;
         }
 
         .motivation {
@@ -491,12 +461,12 @@
         <div class="navbar">
             <div class="logo">
                 <h1>📚 Planner ENEM Medicina</h1>
-                <div class="subtitle" style="font-size: 0.8rem; color: var(--text-secondary);">Timer • Ranking em Tempo Real • Temas</div>
+                <div class="subtitle" style="font-size: 0.8rem; color: var(--text-secondary);">Timer • Ranking Sincronizado • Temas</div>
             </div>
             <div class="theme-selector">
                 <button class="theme-btn" data-theme="dark">🌙 Escuro</button>
                 <button class="theme-btn" data-theme="light">☀️ Claro</button>
-                <button class="theme-btn" data-theme="auto">📱 Modo do Dispositivo</button>
+                <button class="theme-btn" data-theme="auto">📱 Dispositivo</button>
                 <button class="focus-btn" id="focusModeBtn">🎯 Modo Foco</button>
             </div>
         </div>
@@ -504,7 +474,7 @@
         <div class="user-section">
             <div class="user-info">
                 <input type="text" id="userNameInput" placeholder="Seu nome">
-                <button id="loginBtn">🚀 Entrar / Criar conta</button>
+                <button id="loginBtn">🚀 Entrar</button>
             </div>
             <div class="current-user" id="currentUserDisplay">Nenhum usuário logado</div>
         </div>
@@ -517,7 +487,7 @@
             <div class="ranking-list" id="rankingList">
                 <div class="loading">Carregando ranking...</div>
             </div>
-            <div class="last-update" id="lastUpdateTime">Atualizando automaticamente...</div>
+            <div class="last-update" id="lastUpdateTime"></div>
         </div>
 
         <div class="timer-section">
@@ -529,7 +499,7 @@
                 <button class="timer-btn pause" id="pauseTimerBtn">⏸ Pausar</button>
                 <button class="timer-btn reset" id="resetTimerBtn">⏹ Zerar</button>
             </div>
-            <div style="font-size: 0.7rem; margin-top: 10px; color: var(--text-secondary);">💡 Dica: Clique no nome da matéria para vincular o timer</div>
+            <div style="font-size: 0.7rem; margin-top: 10px; color: var(--text-secondary);">💡 Clique no nome da matéria para vincular o timer</div>
         </div>
 
         <div class="metrics">
@@ -563,7 +533,10 @@
     </div>
 
     <script>
-        // ========== SISTEMA DE TEMAS ==========
+        // ========== CONFIGURAÇÃO SHEETDB ==========
+        const SHEETDB_URL = "https://sheetdb.io/api/v1/1evq5bg7yn8oz";
+        
+        // ========== TEMAS ==========
         function getSystemTheme() {
             return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
@@ -620,8 +593,6 @@
         let timerSeconds = 0;
         let isRunning = false;
         let currentSubjectTimer = null;
-        
-        // Intervalo para atualizar ranking em tempo real
         let rankingInterval = null;
         
         const defaultSubjects = [
@@ -680,9 +651,6 @@
             if (currentUser && currentWeekData) {
                 const key = `planner_${currentUser}_${currentWeekId}`;
                 localStorage.setItem(key, JSON.stringify(currentWeekData));
-                localStorage.setItem(`lastUser`, currentUser);
-                // Disparar evento de atualização para outros usuários (via localStorage)
-                localStorage.setItem('ranking_update', Date.now().toString());
             }
         }
         
@@ -700,82 +668,162 @@
             return false;
         }
         
-        function loadUserData() {
-            if (!currentUser) return false;
-            const loadedLocal = loadFromLocal();
-            if (!loadedLocal) {
-                currentWeekData = distributeSubjects(JSON.parse(JSON.stringify(defaultDays)));
-                saveToLocal();
+        async function syncToSheetDB() {
+            if (!currentUser || !currentWeekData) return;
+            
+            try {
+                // Primeiro, deletar dados antigos do usuário na semana atual
+                await fetch(`${SHEETDB_URL}/usuario/${encodeURIComponent(currentUser)}/semana/${encodeURIComponent(currentWeekId)}`, {
+                    method: 'DELETE'
+                }).catch(e => console.log("Nada para deletar"));
+                
+                // Enviar cada tarefa
+                for (const [dayKey, day] of Object.entries(currentWeekData)) {
+                    for (const task of day.tasks) {
+                        const payload = {
+                            usuario: currentUser,
+                            semana: currentWeekId,
+                            dia: dayKey,
+                            materia: task.name,
+                            horas: task.hoursStudied.toString(),
+                            completado: task.completed ? "SIM" : "NAO",
+                            topico: task.topic || "",
+                            duracao: task.duration,
+                            prioridade: task.badge
+                        };
+                        await fetch(SHEETDB_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                    }
+                }
+                console.log("Dados sincronizados com a nuvem");
+            } catch(e) {
+                console.error("Erro ao sincronizar:", e);
             }
+        }
+        
+        async function loadFromSheetDB() {
+            if (!currentUser) return false;
+            
+            try {
+                const response = await fetch(`${SHEETDB_URL}/search?usuario=${encodeURIComponent(currentUser)}&semana=${encodeURIComponent(currentWeekId)}`);
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    // Reconstruir currentWeekData a partir dos dados
+                    const newWeekData = JSON.parse(JSON.stringify(defaultDays));
+                    for (const day in newWeekData) {
+                        newWeekData[day].tasks = [];
+                    }
+                    
+                    for (const row of data) {
+                        const dayKey = row.dia;
+                        if (!newWeekData[dayKey]) continue;
+                        
+                        newWeekData[dayKey].tasks.push({
+                            name: row.materia,
+                            duration: row.duracao || "1h✨ Leve",
+                            badge: row.prioridade || "Média",
+                            badgeClass: row.prioridade === "Crítica" ? "badge-critical" : (row.prioridade === "Alta" ? "badge-high" : "badge-medium"),
+                            completed: row.completado === "SIM",
+                            topic: row.topico || "",
+                            hoursStudied: parseFloat(row.horas) || 0
+                        });
+                    }
+                    
+                    // Verificar se todas as tasks estão preenchidas
+                    for (const day in newWeekData) {
+                        if (newWeekData[day].tasks.length === 0) {
+                            // Adicionar matérias padrão se estiver vazio
+                            const defaultTasks = [
+                                { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical", completed: false, topic: "", hoursStudied: 0 },
+                                { name: "Biologia", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical", completed: false, topic: "", hoursStudied: 0 },
+                                { name: "Português", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high", completed: false, topic: "", hoursStudied: 0 }
+                            ];
+                            newWeekData[day].tasks = defaultTasks;
+                        }
+                    }
+                    
+                    currentWeekData = newWeekData;
+                    saveToLocal();
+                    return true;
+                }
+            } catch(e) {
+                console.error("Erro ao carregar da nuvem:", e);
+            }
+            return false;
+        }
+        
+        async function loadUserData() {
+            if (!currentUser) return false;
+            
+            // Tentar carregar da nuvem primeiro
+            const loadedFromCloud = await loadFromSheetDB();
+            
+            if (!loadedFromCloud) {
+                // Se não tem na nuvem, carregar local ou criar novo
+                const loadedLocal = loadFromLocal();
+                if (!loadedLocal) {
+                    currentWeekData = distributeSubjects(JSON.parse(JSON.stringify(defaultDays)));
+                    saveToLocal();
+                }
+            }
+            
             renderGrid();
             updateTimeMetrics();
             calculateProgress();
             return true;
         }
         
-        function saveData() {
+        async function saveData() {
             saveToLocal();
             updateTimeMetrics();
             calculateProgress();
-            updateRanking();
+            await syncToSheetDB();
+            await updateRanking();
         }
         
-        function updateRanking() {
-            const users = new Set();
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith("planner_")) {
-                    const userName = key.split("_")[1];
-                    if (userName) users.add(userName);
-                }
-            }
-            
-            const ranking = [];
-            for (const user of users) {
-                let totalHours = 0;
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && key.startsWith(`planner_${user}_`)) {
-                        const data = JSON.parse(localStorage.getItem(key));
-                        if (data) {
-                            for (const day of Object.values(data)) {
-                                for (const task of day.tasks) {
-                                    totalHours += task.hoursStudied || 0;
-                                }
-                            }
-                        }
+        async function updateRanking() {
+            try {
+                const response = await fetch(SHEETDB_URL);
+                const allData = await response.json();
+                
+                const userHours = {};
+                for (const row of allData) {
+                    if (row.usuario) {
+                        const horas = parseFloat(row.horas) || 0;
+                        userHours[row.usuario] = (userHours[row.usuario] || 0) + horas;
                     }
                 }
-                ranking.push({ name: user, hours: totalHours });
+                
+                const ranking = Object.entries(userHours).map(([name, hours]) => ({ name, hours }));
+                ranking.sort((a,b) => b.hours - a.hours);
+                
+                const rankingList = document.getElementById("rankingList");
+                if (ranking.length === 0) {
+                    rankingList.innerHTML = '<div class="loading">Nenhum usuário cadastrado ainda</div>';
+                } else {
+                    rankingList.innerHTML = ranking.map((r, i) => `
+                        <div class="ranking-item">
+                            <span class="ranking-name">${i+1}. ${r.name} ${r.name === currentUser ? "👑" : ""}</span>
+                            <span class="ranking-time">${r.hours.toFixed(1)} horas</span>
+                        </div>
+                    `).join("");
+                }
+                
+                document.getElementById("lastUpdateTime").innerHTML = `🔄 Atualizado: ${new Date().toLocaleTimeString()}`;
+            } catch(e) {
+                console.error("Erro ao atualizar ranking:", e);
             }
-            
-            ranking.sort((a,b) => b.hours - a.hours);
-            
-            const rankingList = document.getElementById("rankingList");
-            if (ranking.length === 0) {
-                rankingList.innerHTML = '<div class="loading">Nenhum usuário cadastrado ainda</div>';
-            } else {
-                rankingList.innerHTML = ranking.map((r, i) => `
-                    <div class="ranking-item">
-                        <span class="ranking-name">${i+1}. ${r.name} ${r.name === currentUser ? "👑" : ""}</span>
-                        <span class="ranking-time">${r.hours.toFixed(1)} horas</span>
-                    </div>
-                `).join("");
-            }
-            
-            // Atualizar hora da última atualização
-            const now = new Date();
-            document.getElementById("lastUpdateTime").innerHTML = `🔄 Atualizado: ${now.toLocaleTimeString()}`;
         }
         
-        // Iniciar atualização automática do ranking a cada 3 segundos
         function startAutoRanking() {
             if (rankingInterval) clearInterval(rankingInterval);
             rankingInterval = setInterval(() => {
-                if (currentUser) {
-                    updateRanking();
-                }
-            }, 3000);
+                if (currentUser) updateRanking();
+            }, 5000);
         }
         
         function addSubject(dayKey) {
@@ -1021,7 +1069,7 @@
             }
         }
         
-        function resetWeek() {
+        async function resetWeek() {
             if (confirm("Resetar todo o progresso da semana? Isso vai zerar horas e conclusões.")) {
                 for (const day in currentWeekData) {
                     for (const task of currentWeekData[day].tasks) {
@@ -1029,13 +1077,13 @@
                         task.hoursStudied = 0;
                     }
                 }
-                saveData();
+                await saveData();
                 renderGrid();
-                updateRanking();
+                await updateRanking();
             }
         }
         
-        function login() {
+        async function login() {
             const name = document.getElementById("userNameInput").value.trim();
             if (!name) {
                 alert("Digite seu nome!");
@@ -1045,25 +1093,14 @@
             document.getElementById("currentUserDisplay").innerHTML = `👤 Usuário: ${name}`;
             document.getElementById("rankingSection").style.display = "block";
             
-            loadUserData();
-            updateRanking();
+            await loadUserData();
+            await updateRanking();
             renderGrid();
-            localStorage.setItem("lastUser", name);
-            
-            // Iniciar atualização automática do ranking
             startAutoRanking();
+            localStorage.setItem("lastUser", name);
         }
         
-        // Detectar mudanças no localStorage de outras abas/usuários
-        window.addEventListener('storage', (e) => {
-            if (e.key && e.key.startsWith('planner_') && currentUser) {
-                updateRanking();
-            }
-            if (e.key === 'ranking_update' && currentUser) {
-                updateRanking();
-            }
-        });
-        
+        // Event listeners
         document.getElementById("loginBtn").addEventListener("click", login);
         document.getElementById("startTimerBtn").addEventListener("click", startTimer);
         document.getElementById("pauseTimerBtn").addEventListener("click", pauseTimer);
