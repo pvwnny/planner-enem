@@ -2,492 +2,223 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM - Cronograma Completo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planner ENEM</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body.theme-dark {
-            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            --card-bg: rgba(255,255,255,0.1);
-            --text-primary: #fff;
-            --text-secondary: #aaa;
-            --accent: #e63946;
-            --accent-secondary: #f1c40f;
-            --border: rgba(255,255,255,0.2);
-            --input-bg: rgba(255,255,255,0.2);
-            --task-bg: rgba(0,0,0,0.3);
-            --hover-bg: rgba(255,255,255,0.1);
-        }
-
-        body.theme-light {
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            --card-bg: rgba(255,255,255,0.9);
-            --text-primary: #2c3e50;
-            --text-secondary: #5a6e7a;
-            --accent: #e63946;
-            --accent-secondary: #f39c12;
-            --border: rgba(0,0,0,0.1);
-            --input-bg: rgba(0,0,0,0.05);
-            --task-bg: rgba(0,0,0,0.05);
-            --hover-bg: rgba(0,0,0,0.05);
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-primary);
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
             padding: 20px;
-            min-height: 100vh;
-            transition: background 0.3s ease;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .navbar {
+        .container { max-width: 1200px; margin: auto; }
+        h1 { text-align: center; margin-bottom: 20px; color: #f1c40f; }
+        .user-area {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            padding: 15px 20px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid var(--border);
+            gap: 10px;
         }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .user-area input, .user-area button {
+            padding: 10px 15px;
+            border-radius: 25px;
+            border: none;
+            font-size: 16px;
         }
-
-        .theme-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .user-area input { background: rgba(255,255,255,0.2); color: white; }
+        .user-area button { background: #e63946; color: white; cursor: pointer; }
+        .timer-area {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
         }
-
-        .theme-btn, .focus-btn {
-            padding: 8px 16px;
+        .timer-display {
+            font-size: 48px;
+            font-family: monospace;
+            background: black;
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin: 10px 0;
+        }
+        .timer-btn {
+            padding: 10px 20px;
+            margin: 5px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            background: var(--input-bg);
-            color: var(--text-primary);
-        }
-
-        .focus-btn {
-            background: var(--accent);
-            color: white;
-        }
-
-        .user-section {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            border: 1px solid var(--border);
-        }
-
-        .user-info {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .user-info input {
-            padding: 12px 20px;
-            border-radius: 30px;
-            border: none;
-            background: var(--input-bg);
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-
-        .user-info button {
-            padding: 12px 25px;
-            border-radius: 30px;
-            border: none;
-            background: var(--accent);
-            color: white;
-            cursor: pointer;
             font-weight: bold;
         }
-
-        .current-user {
-            font-size: 1.1rem;
-            background: var(--task-bg);
-            padding: 8px 18px;
-            border-radius: 30px;
-        }
-
-        .ranking-section {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
+        .start { background: #2ecc71; color: white; }
+        .pause { background: #f39c12; color: white; }
+        .reset { background: #e74c3c; color: white; }
+        .ranking {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
             margin-bottom: 20px;
-            border: 1px solid var(--border);
         }
-
-        .ranking-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .live-badge {
-            font-size: 0.7rem;
-            background: #2ecc71;
-            padding: 4px 10px;
-            border-radius: 20px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-
-        .ranking-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
         .ranking-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px;
-            background: var(--task-bg);
-            border-radius: 12px;
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
         }
-
-        .timer-section {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .timer-display {
-            font-size: 4rem;
-            font-family: monospace;
-            background: var(--task-bg);
-            padding: 20px;
-            border-radius: 20px;
-            display: inline-block;
-            margin: 10px 0;
-        }
-
-        .timer-controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 15px;
-        }
-
-        .timer-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .timer-btn.start { background: #2ecc71; color: white; }
-        .timer-btn.pause { background: #f39c12; color: white; }
-        .timer-btn.reset { background: #e74c3c; color: white; }
-
-        .metrics {
+        .week-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .metric-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .progress-bar-container {
-            background: var(--task-bg);
-            border-radius: 10px;
-            height: 10px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-            transition: width 0.3s ease;
-        }
-
-        .weekly-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
-            overflow-x: auto;
-            margin-bottom: 30px;
         }
-
         .day-card {
-            background: var(--card-bg);
-            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
             padding: 15px;
-            min-width: 280px;
         }
-
         .day-header {
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 2px solid #f1c40f;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--accent-secondary);
-            padding-bottom: 8px;
         }
-
-        .day-name { font-size: 1.3rem; font-weight: bold; }
-        .day-completed { font-size: 0.7rem; background: var(--task-bg); padding: 3px 10px; border-radius: 20px; }
-
-        .task-item {
-            background: var(--task-bg);
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 10px;
+        .task {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
         }
-
-        .task-item.completed {
-            background: rgba(46,204,113,0.2);
-            border-left: 3px solid #2ecc71;
-        }
-
+        .task.completed { background: rgba(46,204,113,0.2); border-left: 3px solid #2ecc71; }
         .task-header {
             display: flex;
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
         }
-
-        .task-checkbox { width: 18px; height: 18px; cursor: pointer; }
         .task-name { font-weight: bold; cursor: pointer; flex: 1; }
-        .task-duration { font-size: 0.7rem; background: var(--task-bg); padding: 2px 8px; border-radius: 12px; }
-
-        .badge {
-            font-size: 0.65rem;
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
-        .badge-critical { background: #e63946; }
-        .badge-high { background: #3498db; }
-        .badge-medium { background: #f39c12; }
-
-        .hours-studied {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            font-size: 0.7rem;
-            flex-wrap: wrap;
-        }
-
-        .hours-studied button {
-            background: var(--input-bg);
-            border: none;
-            padding: 2px 8px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .task-topic {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            margin-top: 5px;
-            padding: 4px;
-        }
-
-        .add-subject-btn {
-            width: 100%;
-            margin-top: 10px;
-            background: var(--input-bg);
-            border: 1px dashed var(--border);
-            padding: 8px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .reset-btn {
-            display: block;
-            margin: 20px auto;
-            background: var(--accent);
+        .task-checkbox { width: 18px; height: 18px; cursor: pointer; }
+        .hours-buttons button {
+            background: rgba(255,255,255,0.2);
             border: none;
             color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin: 2px;
             cursor: pointer;
         }
-
-        .motivation {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: 20px;
+        .topic {
+            font-size: 12px;
+            color: #aaa;
+            cursor: pointer;
+            margin-top: 5px;
         }
-
-        body.focus-mode .ranking-section,
-        body.focus-mode .motivation,
-        body.focus-mode .metrics {
-            display: none;
+        .add-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 5px;
+            background: rgba(255,255,255,0.2);
+            border: 1px dashed white;
+            border-radius: 10px;
+            cursor: pointer;
         }
-
+        .reset-all {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #e63946;
+            border: none;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+        }
         @media (max-width: 768px) {
-            .weekly-grid { grid-template-columns: 1fr; }
-            .timer-display { font-size: 2rem; }
+            .week-grid { grid-template-columns: 1fr; }
+            .timer-display { font-size: 32px; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="navbar">
-        <div class="logo"><h1>📚 Planner ENEM Medicina</h1></div>
-        <div class="theme-selector">
-            <button class="theme-btn" data-theme="dark">🌙 Escuro</button>
-            <button class="theme-btn" data-theme="light">☀️ Claro</button>
-            <button class="focus-btn" id="focusModeBtn">🎯 Modo Foco</button>
-        </div>
+    <h1>📚 Planner ENEM Medicina</h1>
+
+    <div class="user-area">
+        <input type="text" id="userName" placeholder="Seu nome">
+        <button id="loginBtn">Entrar</button>
+        <span id="userDisplay" style="background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 25px;">Nenhum usuário</span>
     </div>
 
-    <div class="user-section">
-        <div class="user-info">
-            <input type="text" id="userNameInput" placeholder="Seu nome">
-            <button id="loginBtn">🚀 Entrar</button>
-        </div>
-        <div class="current-user" id="currentUserDisplay">Nenhum usuário logado</div>
+    <div class="ranking" id="rankingArea" style="display: none;">
+        <h3>🏆 Ranking</h3>
+        <div id="rankingList">Carregando...</div>
     </div>
 
-    <div class="ranking-section" id="rankingSection" style="display: none;">
-        <div class="ranking-header">
-            <h3>🏆 Ranking - Horas de Estudo</h3>
-            <span class="live-badge">🔴 AO VIVO</span>
-        </div>
-        <div class="ranking-list" id="rankingList"><div class="loading">Carregando...</div></div>
+    <div class="timer-area">
+        <h3>⏱️ Timer</h3>
+        <div class="timer-display" id="timer">00:00:00</div>
+        <div id="currentSubject" style="margin: 10px 0;">📖 Nenhuma matéria</div>
+        <button class="timer-btn start" id="startTimer">▶ Iniciar</button>
+        <button class="timer-btn pause" id="pauseTimer">⏸ Pausar</button>
+        <button class="timer-btn reset" id="resetTimer">⏹ Zerar</button>
     </div>
 
-    <div class="timer-section">
-        <h3>⏱️ Timer de Estudo</h3>
-        <div class="timer-display" id="timerDisplay">00:00:00</div>
-        <div class="current-subject" id="currentSubject">📖 Nenhuma disciplina selecionada</div>
-        <div class="timer-controls">
-            <button class="timer-btn start" id="startTimerBtn">▶ Iniciar</button>
-            <button class="timer-btn pause" id="pauseTimerBtn">⏸ Pausar</button>
-            <button class="timer-btn reset" id="resetTimerBtn">⏹ Zerar</button>
-        </div>
-    </div>
+    <div id="weekGrid" class="week-grid"></div>
 
-    <div class="metrics">
-        <div class="metric-card"><h3>🎯 Progresso</h3><div class="value" id="weeklyProgress">0%</div><div class="progress-bar-container"><div class="progress-bar" id="progressBarFill"></div></div></div>
-        <div class="metric-card"><h3>⏱️ Tempo Hoje</h3><div class="value" id="todayTime">0h</div></div>
-        <div class="metric-card"><h3>📊 Total Semana</h3><div class="value" id="weeklyTime">0h</div></div>
-    </div>
-
-    <div class="weekly-grid" id="weeklyGrid"><div class="loading">Faça login</div></div>
-    <button class="reset-btn" id="resetBtn">🔄 Resetar Progresso</button>
-    <div class="motivation">🎯 Medicina na Federal ou Estadual<br>Consistência + Disciplina = Aprovação! 💪</div>
+    <button class="reset-all" id="resetWeek">🔄 Resetar Semana</button>
 </div>
 
 <script>
-    // ========== TEMAS ==========
-    function setTheme(theme) {
-        document.body.className = `theme-${theme}`;
-        localStorage.setItem('theme', theme);
-    }
-    setTheme(localStorage.getItem('theme') || 'dark');
-    document.querySelectorAll('[data-theme]').forEach(btn => {
-        btn.onclick = () => setTheme(btn.dataset.theme);
-    });
-
-    let focus = false;
-    document.getElementById('focusModeBtn').onclick = () => {
-        focus = !focus;
-        document.body.classList.toggle('focus-mode', focus);
-        document.getElementById('focusModeBtn').textContent = focus ? '👁️ Sair' : '🎯 Foco';
+    // Cronograma completo
+    const schedule = {
+        seg: { name: "SEG", tasks: [
+            { name: "Matemática", duration: "1h🔥", badge: "Crítica" },
+            { name: "Biologia", duration: "1h🔥", badge: "Crítica" },
+            { name: "Português", duration: "1h✨", badge: "Alta" }
+        ]},
+        ter: { name: "TER", tasks: [
+            { name: "Química", duration: "1h🔥", badge: "Crítica" },
+            { name: "Física", duration: "1h🔥", badge: "Alta" },
+            { name: "Matemática", duration: "1h✨", badge: "Crítica" }
+        ]},
+        qua: { name: "QUA", tasks: [
+            { name: "História", duration: "45min✨", badge: "Média" },
+            { name: "Geografia", duration: "45min✨", badge: "Média" },
+            { name: "Matemática", duration: "1h30✨", badge: "Crítica" }
+        ]},
+        qui: { name: "QUI", tasks: [
+            { name: "Redação", duration: "1h30🔥", badge: "Crítica" },
+            { name: "Física", duration: "45min✨", badge: "Alta" },
+            { name: "Biologia", duration: "45min✨", badge: "Crítica" }
+        ]},
+        sex: { name: "SEX", tasks: [
+            { name: "Química", duration: "1h✨", badge: "Crítica" },
+            { name: "Matemática", duration: "1h🔥", badge: "Crítica" },
+            { name: "Revisão", duration: "1h✨", badge: "Alta" }
+        ]},
+        sab: { name: "SÁB", tasks: [
+            { name: "Matemática", duration: "1h🔥", badge: "Crítica" },
+            { name: "Biologia", duration: "1h🔥", badge: "Crítica" },
+            { name: "Química", duration: "1h🔥", badge: "Crítica" }
+        ]},
+        dom: { name: "DOM", tasks: [
+            { name: "Redação", duration: "1h🔥", badge: "Crítica" },
+            { name: "Humanas", duration: "1h✨", badge: "Média" },
+            { name: "Revisão Geral", duration: "1h✨", badge: "Alta" }
+        ]}
     };
 
-    // ========== CRONOGRAMA COMPLETO ==========
-    const fullSchedule = {
-        seg: { name: "SEG", fullName: "Segunda", tasks: [
-            { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Biologia", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Português", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" }
-        ] },
-        ter: { name: "TER", fullName: "Terça", tasks: [
-            { name: "Química", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Física", duration: "1h🔥 Pesado", badge: "Alta", badgeClass: "badge-high" },
-            { name: "Matemática", duration: "1h✨ Leve", badge: "Crítica", badgeClass: "badge-critical" }
-        ] },
-        qua: { name: "QUA", fullName: "Quarta", tasks: [
-            { name: "História", duration: "45min✨ Leve", badge: "Média", badgeClass: "badge-medium" },
-            { name: "Geografia", duration: "45min✨ Leve", badge: "Média", badgeClass: "badge-medium" },
-            { name: "Matemática", duration: "1h30✨ Leve", badge: "Crítica", badgeClass: "badge-critical" }
-        ] },
-        qui: { name: "QUI", fullName: "Quinta", tasks: [
-            { name: "Redação", duration: "1h30🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Física", duration: "45min✨ Leve", badge: "Alta", badgeClass: "badge-high" },
-            { name: "Biologia", duration: "45min✨ Leve", badge: "Crítica", badgeClass: "badge-critical" }
-        ] },
-        sex: { name: "SEX", fullName: "Sexta", tasks: [
-            { name: "Química", duration: "1h✨ Leve", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Revisão", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" }
-        ] },
-        sab: { name: "SÁB", fullName: "Sábado", tasks: [
-            { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Biologia", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Química", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" }
-        ] },
-        dom: { name: "DOM", fullName: "Domingo", tasks: [
-            { name: "Redação", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
-            { name: "Humanas", duration: "1h✨ Leve", badge: "Média", badgeClass: "badge-medium" },
-            { name: "Revisão Geral", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" }
-        ] }
-    };
-
-    // ========== DADOS ==========
     let currentUser = null;
-    let currentWeekData = {};
-    let currentWeekId = getWeekId();
-    let timerInterval = null, timerSeconds = 0, isRunning = false, currentSubject = null;
-    let rankingInterval = null;
+    let weekData = {};
+    let timerSeconds = 0, timerInterval = null, isRunning = false;
+    let currentDay = null, currentTaskIdx = null;
 
     function getWeekId() {
         let now = new Date();
@@ -498,241 +229,194 @@
 
     function initWeekData() {
         let data = {};
-        for (let [key, day] of Object.entries(fullSchedule)) {
+        for (let [key, day] of Object.entries(schedule)) {
             data[key] = {
                 name: day.name,
-                tasks: day.tasks.map(t => ({ ...t, completed: false, topic: "", hoursStudied: 0 }))
+                tasks: day.tasks.map(t => ({
+                    ...t,
+                    completed: false,
+                    topic: "",
+                    hours: 0
+                }))
             };
         }
         return data;
     }
 
-    function saveLocal() {
+    function saveData() {
         if (currentUser) {
-            localStorage.setItem(`planner_${currentUser}_${currentWeekId}`, JSON.stringify(currentWeekData));
-            localStorage.setItem('ranking_update', Date.now().toString());
+            let key = `planner_${currentUser}_${getWeekId()}`;
+            localStorage.setItem(key, JSON.stringify(weekData));
+            localStorage.setItem('ranking_update', Date.now());
         }
     }
 
-    function loadLocal() {
-        let saved = localStorage.getItem(`planner_${currentUser}_${currentWeekId}`);
-        if (saved) {
-            currentWeekData = JSON.parse(saved);
-            return true;
+    function loadData() {
+        if (currentUser) {
+            let key = `planner_${currentUser}_${getWeekId()}`;
+            let saved = localStorage.getItem(key);
+            if (saved) {
+                weekData = JSON.parse(saved);
+                return true;
+            }
         }
         return false;
     }
 
-    function loadUser() {
-        if (!currentUser) return;
-        if (!loadLocal()) {
-            currentWeekData = initWeekData();
-            saveLocal();
-        }
-        renderGrid();
-        updateMetrics();
-    }
-
     function updateRanking() {
-        let users = new Set();
+        let users = {};
         for (let i = 0; i < localStorage.length; i++) {
             let key = localStorage.key(i);
             if (key && key.startsWith('planner_')) {
                 let user = key.split('_')[1];
-                if (user) users.add(user);
-            }
-        }
-        let ranking = [];
-        for (let user of users) {
-            let total = 0;
-            for (let i = 0; i < localStorage.length; i++) {
-                let key = localStorage.key(i);
-                if (key && key.startsWith(`planner_${user}_`)) {
+                if (user) {
                     let data = JSON.parse(localStorage.getItem(key));
                     if (data) {
+                        let total = 0;
                         for (let day of Object.values(data)) {
                             for (let task of day.tasks) {
-                                total += task.hoursStudied || 0;
+                                total += task.hours || 0;
                             }
                         }
+                        users[user] = (users[user] || 0) + total;
                     }
                 }
             }
-            ranking.push({ name: user, hours: total });
         }
+        let ranking = Object.entries(users).map(([name, hours]) => ({ name, hours }));
         ranking.sort((a,b) => b.hours - a.hours);
-        let html = ranking.length ? ranking.map((r,i) => `
-            <div class="ranking-item">
-                <span>${i+1}. ${r.name} ${r.name === currentUser ? '👑' : ''}</span>
-                <span>${r.hours.toFixed(1)}h</span>
-            </div>
-        `).join('') : '<div class="loading">Nenhum usuário ainda</div>';
-        document.getElementById('rankingList').innerHTML = html;
-    }
-
-    function startAutoRanking() {
-        if (rankingInterval) clearInterval(rankingInterval);
-        rankingInterval = setInterval(() => { if (currentUser) updateRanking(); }, 3000);
-    }
-
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'ranking_update' && currentUser) updateRanking();
-        if (e.key && e.key.startsWith('planner_') && currentUser) updateRanking();
-    });
-
-    function addHours(day, idx, hours) {
-        currentWeekData[day].tasks[idx].hoursStudied += hours;
-        saveLocal();
-        renderGrid();
-        updateMetrics();
-        updateRanking();
-        showToast(`+${hours}h em ${currentWeekData[day].tasks[idx].name}`);
-    }
-
-    function addSubject(day) {
-        let name = prompt("Nome da matéria:");
-        if (!name) return;
-        let duration = prompt("Duração (ex: 1h🔥 Pesado):", "1h✨ Leve");
-        let badge = prompt("Prioridade (Crítica/Alta/Média):", "Média");
-        let badgeClass = badge === "Crítica" ? "badge-critical" : (badge === "Alta" ? "badge-high" : "badge-medium");
-        currentWeekData[day].tasks.push({
-            name, duration, badge, badgeClass,
-            completed: false, topic: "", hoursStudied: 0
-        });
-        saveLocal();
-        renderGrid();
-    }
-
-    function deleteSubject(day, idx) {
-        if (confirm("Remover esta matéria?")) {
-            currentWeekData[day].tasks.splice(idx, 1);
-            saveLocal();
-            renderGrid();
-        }
-    }
-
-    function setCurrentSubject(day, idx) {
-        currentSubject = { day, idx };
-        document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${currentWeekData[day].tasks[idx].name}`;
-    }
-
-    function updateMetrics() {
-        let today = new Date().getDay();
-        let map = {0:'dom',1:'seg',2:'ter',3:'qua',4:'qui',5:'sex',6:'sab'};
-        let todayKey = map[today];
-        let todayHours = 0, weekHours = 0, totalTasks = 0, completedTasks = 0;
-        for (let [day, data] of Object.entries(currentWeekData)) {
-            for (let task of data.tasks) {
-                weekHours += task.hoursStudied;
-                if (day === todayKey) todayHours += task.hoursStudied;
-                totalTasks++;
-                if (task.completed) completedTasks++;
-            }
-        }
-        document.getElementById('todayTime').innerHTML = todayHours.toFixed(1) + 'h';
-        document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1) + 'h';
-        let percent = totalTasks ? Math.round(completedTasks / totalTasks * 100) : 0;
-        document.getElementById('weeklyProgress').innerHTML = percent + '%';
-        document.getElementById('progressBarFill').style.width = percent + '%';
+        let html = ranking.map((r,i) => `<div class="ranking-item"><span>${i+1}. ${r.name} ${r.name === currentUser ? '👑' : ''}</span><span>${r.hours.toFixed(1)}h</span></div>`).join('');
+        document.getElementById('rankingList').innerHTML = html || '<div>Nenhum usuário ainda</div>';
     }
 
     function renderGrid() {
-        let grid = document.getElementById('weeklyGrid');
-        if (!currentWeekData) { grid.innerHTML = '<div class="loading">Faça login</div>'; return; }
+        let grid = document.getElementById('weekGrid');
         grid.innerHTML = '';
-        for (let [dayKey, day] of Object.entries(currentWeekData)) {
+        for (let [dayKey, day] of Object.entries(weekData)) {
             let completed = day.tasks.filter(t => t.completed).length;
             let card = document.createElement('div');
             card.className = 'day-card';
             card.innerHTML = `
                 <div class="day-header">
-                    <span class="day-name">${day.name}</span>
-                    <span class="day-completed">${completed}/${day.tasks.length} concluído</span>
+                    <span>${day.name}</span>
+                    <span>${completed}/${day.tasks.length} ✓</span>
                 </div>
                 ${day.tasks.map((task, idx) => `
-                    <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <div class="task ${task.completed ? 'completed' : ''}">
                         <div class="task-header">
                             <input type="checkbox" class="task-checkbox" data-day="${dayKey}" data-idx="${idx}" ${task.completed ? 'checked' : ''}>
                             <span class="task-name" data-day="${dayKey}" data-idx="${idx}" data-timer>${task.name}</span>
-                            <span class="task-duration">${task.duration}</span>
-                            <span class="badge ${task.badgeClass}">${task.badge}</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:20px; padding:2px 8px; cursor:pointer;">🗑️</button>
+                            <span>${task.duration}</span>
+                            <span style="background:#e74c3c; padding:2px 6px; border-radius:12px; font-size:11px;">${task.badge}</span>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:12px; padding:2px 6px;">🗑️</button>
                         </div>
-                        <div class="hours-studied">
-                            <span>⏱️ Horas: ${task.hoursStudied.toFixed(1)}h</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5h</button>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1h</button>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="2">+2h</button>
+                        <div class="hours-buttons">
+                            ⏱️ ${task.hours.toFixed(1)}h
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="2">+2</button>
                         </div>
-                        <div class="task-topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Clique para adicionar tópico..."}</div>
+                        <div class="topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Adicionar tópico"}</div>
                     </div>
                 `).join('')}
-                <button class="add-subject-btn" data-day="${dayKey}">+ Adicionar Matéria</button>
+                <button class="add-btn" data-day="${dayKey}">+ Adicionar Matéria</button>
             `;
             grid.appendChild(card);
         }
         attachEvents();
+        updateStats();
     }
 
     function attachEvents() {
         document.querySelectorAll('.task-checkbox').forEach(cb => {
             cb.onchange = () => {
                 let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
-                currentWeekData[day].tasks[idx].completed = cb.checked;
-                saveLocal();
+                weekData[day].tasks[idx].completed = cb.checked;
+                saveData();
                 renderGrid();
-                updateMetrics();
             };
         });
         document.querySelectorAll('[data-timer]').forEach(el => {
             el.onclick = () => {
-                setCurrentSubject(el.dataset.day, parseInt(el.dataset.idx));
+                currentDay = el.dataset.day;
+                currentTaskIdx = parseInt(el.dataset.idx);
+                document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${weekData[currentDay].tasks[currentTaskIdx].name}`;
                 startTimer();
             };
         });
         document.querySelectorAll('[data-delete]').forEach(btn => {
-            btn.onclick = () => deleteSubject(btn.dataset.day, parseInt(btn.dataset.idx));
+            btn.onclick = () => {
+                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
+                if (confirm('Remover?')) {
+                    weekData[day].tasks.splice(idx, 1);
+                    saveData();
+                    renderGrid();
+                }
+            };
         });
         document.querySelectorAll('[data-hours]').forEach(btn => {
-            btn.onclick = () => addHours(btn.dataset.day, parseInt(btn.dataset.idx), parseFloat(btn.dataset.hours));
+            btn.onclick = () => {
+                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
+                let hours = parseFloat(btn.dataset.hours);
+                weekData[day].tasks[idx].hours += hours;
+                saveData();
+                renderGrid();
+                updateRanking();
+            };
         });
-        document.querySelectorAll('.add-subject-btn').forEach(btn => {
-            btn.onclick = () => addSubject(btn.dataset.day);
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.onclick = () => {
+                let day = btn.dataset.day;
+                let name = prompt('Nome da matéria:');
+                if (name) {
+                    weekData[day].tasks.push({
+                        name, duration: "1h✨", badge: "Média",
+                        completed: false, topic: "", hours: 0
+                    });
+                    saveData();
+                    renderGrid();
+                }
+            };
         });
-        document.querySelectorAll('.task-topic').forEach(topic => {
+        document.querySelectorAll('.topic').forEach(topic => {
             topic.onclick = function() {
                 let day = this.dataset.day, idx = parseInt(this.dataset.idx);
                 let input = document.createElement('input');
-                input.value = currentWeekData[day].tasks[idx].topic || '';
+                input.value = weekData[day].tasks[idx].topic || '';
                 input.style.width = '100%';
-                input.style.background = 'var(--input-bg)';
-                input.style.color = 'var(--text-primary)';
-                input.style.border = 'none';
                 input.style.padding = '4px';
                 input.style.borderRadius = '8px';
+                input.style.background = '#333';
+                input.style.color = 'white';
+                input.style.border = 'none';
                 this.replaceWith(input);
                 input.focus();
                 input.onblur = () => {
-                    currentWeekData[day].tasks[idx].topic = input.value;
-                    saveLocal();
+                    weekData[day].tasks[idx].topic = input.value;
+                    saveData();
                     renderGrid();
                 };
-                input.onkeypress = (e) => { if (e.key === 'Enter') input.blur(); };
             };
         });
     }
 
-    function showToast(msg) {
-        let t = document.createElement('div');
-        t.textContent = msg;
-        t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:white;padding:10px 20px;border-radius:25px;z-index:1000';
-        document.body.appendChild(t);
-        setTimeout(() => t.remove(), 2000);
-    }
-
-    function updateTimerDisplay() {
-        let h = Math.floor(timerSeconds/3600), m = Math.floor((timerSeconds%3600)/60), s = timerSeconds%60;
-        document.getElementById('timerDisplay').innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    function updateStats() {
+        let today = new Date().getDay();
+        let map = {0:'dom',1:'seg',2:'ter',3:'qua',4:'qui',5:'sex',6:'sab'};
+        let todayKey = map[today];
+        let todayHours = 0, weekHours = 0, totalTasks = 0, completedTasks = 0;
+        for (let [day, data] of Object.entries(weekData)) {
+            for (let task of data.tasks) {
+                weekHours += task.hours;
+                if (day === todayKey) todayHours += task.hours;
+                totalTasks++;
+                if (task.completed) completedTasks++;
+            }
+        }
+        document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1) + 'h';
+        document.getElementById('todayTime').innerHTML = todayHours.toFixed(1) + 'h';
+        let percent = totalTasks ? Math.round(completedTasks / totalTasks * 100) : 0;
+        document.getElementById('weeklyProgress').innerHTML = percent + '%';
     }
 
     function startTimer() {
@@ -740,69 +424,78 @@
         isRunning = true;
         timerInterval = setInterval(() => {
             timerSeconds++;
-            updateTimerDisplay();
-            if (currentSubject && currentUser) {
-                let { day, idx } = currentSubject;
-                if (currentWeekData[day] && currentWeekData[day].tasks[idx]) {
-                    currentWeekData[day].tasks[idx].hoursStudied += 1/3600;
-                    updateMetrics();
-                    saveLocal();
-                    updateRanking();
-                    renderGrid();
-                }
+            let h = Math.floor(timerSeconds/3600);
+            let m = Math.floor((timerSeconds%3600)/60);
+            let s = timerSeconds%60;
+            document.getElementById('timer').innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            if (currentDay !== null && currentTaskIdx !== null) {
+                weekData[currentDay].tasks[currentTaskIdx].hours += 1/3600;
+                saveData();
+                updateStats();
+                updateRanking();
+                renderGrid();
             }
         }, 1000);
     }
 
     function pauseTimer() {
-        if (!isRunning) return;
-        isRunning = false;
-        clearInterval(timerInterval);
-    }
-
-    function resetTimer() {
-        if (confirm('Zerar o timer?')) {
-            pauseTimer();
-            timerSeconds = 0;
-            updateTimerDisplay();
+        if (isRunning) {
+            clearInterval(timerInterval);
+            isRunning = false;
         }
     }
 
+    function resetTimer() {
+        pauseTimer();
+        timerSeconds = 0;
+        document.getElementById('timer').innerHTML = '00:00:00';
+    }
+
     function resetWeek() {
-        if (confirm('Resetar todo o progresso da semana?')) {
-            for (let day in currentWeekData) {
-                for (let task of currentWeekData[day].tasks) {
+        if (confirm('Resetar tudo?')) {
+            for (let day in weekData) {
+                for (let task of weekData[day].tasks) {
                     task.completed = false;
-                    task.hoursStudied = 0;
+                    task.hours = 0;
                 }
             }
-            saveLocal();
+            saveData();
             renderGrid();
-            updateMetrics();
             updateRanking();
         }
     }
 
     function login() {
-        let name = document.getElementById('userNameInput').value.trim();
-        if (!name) return alert('Digite seu nome!');
+        let name = document.getElementById('userName').value.trim();
+        if (!name) return alert('Digite seu nome');
         currentUser = name;
-        document.getElementById('currentUserDisplay').innerHTML = `👤 ${name}`;
-        document.getElementById('rankingSection').style.display = 'block';
-        loadUser();
+        document.getElementById('userDisplay').innerHTML = `👤 ${name}`;
+        document.getElementById('rankingArea').style.display = 'block';
+        if (!loadData()) {
+            weekData = initWeekData();
+            saveData();
+        }
+        renderGrid();
         updateRanking();
-        startAutoRanking();
-        localStorage.setItem('lastUser', name);
+        setInterval(() => { if (currentUser) updateRanking(); }, 3000);
     }
 
     document.getElementById('loginBtn').onclick = login;
-    document.getElementById('startTimerBtn').onclick = startTimer;
-    document.getElementById('pauseTimerBtn').onclick = pauseTimer;
-    document.getElementById('resetTimerBtn').onclick = resetTimer;
-    document.getElementById('resetBtn').onclick = resetWeek;
+    document.getElementById('startTimer').onclick = startTimer;
+    document.getElementById('pauseTimer').onclick = pauseTimer;
+    document.getElementById('resetTimer').onclick = resetTimer;
+    document.getElementById('resetWeek').onclick = resetWeek;
 
-    let last = localStorage.getItem('lastUser');
-    if (last) { document.getElementById('userNameInput').value = last; login(); }
+    let lastUser = localStorage.getItem('lastUser');
+    if (lastUser) {
+        document.getElementById('userName').value = lastUser;
+        login();
+    }
+    window.onload = () => {
+        if (currentUser) {
+            updateRanking();
+        }
+    };
 </script>
 </body>
 </html>
