@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM - Ranking Funcional</title>
+    <title>Planner ENEM - Cronograma Completo</title>
     <style>
         * {
             margin: 0;
@@ -265,7 +265,7 @@
             background: var(--card-bg);
             border-radius: 20px;
             padding: 15px;
-            min-width: 260px;
+            min-width: 280px;
         }
 
         .day-header {
@@ -273,7 +273,11 @@
             justify-content: space-between;
             margin-bottom: 15px;
             border-bottom: 2px solid var(--accent-secondary);
+            padding-bottom: 8px;
         }
+
+        .day-name { font-size: 1.3rem; font-weight: bold; }
+        .day-completed { font-size: 0.7rem; background: var(--task-bg); padding: 3px 10px; border-radius: 20px; }
 
         .task-item {
             background: var(--task-bg);
@@ -296,12 +300,23 @@
 
         .task-checkbox { width: 18px; height: 18px; cursor: pointer; }
         .task-name { font-weight: bold; cursor: pointer; flex: 1; }
+        .task-duration { font-size: 0.7rem; background: var(--task-bg); padding: 2px 8px; border-radius: 12px; }
+
+        .badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .badge-critical { background: #e63946; }
+        .badge-high { background: #3498db; }
+        .badge-medium { background: #f39c12; }
 
         .hours-studied {
             display: flex;
             gap: 8px;
             margin-top: 8px;
             font-size: 0.7rem;
+            flex-wrap: wrap;
         }
 
         .hours-studied button {
@@ -317,6 +332,7 @@
             color: var(--text-secondary);
             cursor: pointer;
             margin-top: 5px;
+            padding: 4px;
         }
 
         .add-subject-btn {
@@ -427,20 +443,51 @@
         document.getElementById('focusModeBtn').textContent = focus ? '👁️ Sair' : '🎯 Foco';
     };
 
+    // ========== CRONOGRAMA COMPLETO ==========
+    const fullSchedule = {
+        seg: { name: "SEG", fullName: "Segunda", tasks: [
+            { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Biologia", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Português", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" }
+        ] },
+        ter: { name: "TER", fullName: "Terça", tasks: [
+            { name: "Química", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Física", duration: "1h🔥 Pesado", badge: "Alta", badgeClass: "badge-high" },
+            { name: "Matemática", duration: "1h✨ Leve", badge: "Crítica", badgeClass: "badge-critical" }
+        ] },
+        qua: { name: "QUA", fullName: "Quarta", tasks: [
+            { name: "História", duration: "45min✨ Leve", badge: "Média", badgeClass: "badge-medium" },
+            { name: "Geografia", duration: "45min✨ Leve", badge: "Média", badgeClass: "badge-medium" },
+            { name: "Matemática", duration: "1h30✨ Leve", badge: "Crítica", badgeClass: "badge-critical" }
+        ] },
+        qui: { name: "QUI", fullName: "Quinta", tasks: [
+            { name: "Redação", duration: "1h30🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Física", duration: "45min✨ Leve", badge: "Alta", badgeClass: "badge-high" },
+            { name: "Biologia", duration: "45min✨ Leve", badge: "Crítica", badgeClass: "badge-critical" }
+        ] },
+        sex: { name: "SEX", fullName: "Sexta", tasks: [
+            { name: "Química", duration: "1h✨ Leve", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Revisão", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" }
+        ] },
+        sab: { name: "SÁB", fullName: "Sábado", tasks: [
+            { name: "Matemática", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Biologia", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Química", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" }
+        ] },
+        dom: { name: "DOM", fullName: "Domingo", tasks: [
+            { name: "Redação", duration: "1h🔥 Pesado", badge: "Crítica", badgeClass: "badge-critical" },
+            { name: "Humanas", duration: "1h✨ Leve", badge: "Média", badgeClass: "badge-medium" },
+            { name: "Revisão Geral", duration: "1h✨ Leve", badge: "Alta", badgeClass: "badge-high" }
+        ] }
+    };
+
     // ========== DADOS ==========
     let currentUser = null;
     let currentWeekData = {};
     let currentWeekId = getWeekId();
     let timerInterval = null, timerSeconds = 0, isRunning = false, currentSubject = null;
     let rankingInterval = null;
-
-    const defaultSubjects = [
-        { name: "Matemática", duration: "1h🔥", badge: "Crítica", badgeClass: "badge-critical" },
-        { name: "Biologia", duration: "1h🔥", badge: "Crítica", badgeClass: "badge-critical" },
-        { name: "Português", duration: "1h✨", badge: "Alta", badgeClass: "badge-high" }
-    ];
-
-    const days = { seg: "SEG", ter: "TER", qua: "QUA", qui: "QUI", sex: "SEX", sab: "SÁB", dom: "DOM" };
 
     function getWeekId() {
         let now = new Date();
@@ -451,11 +498,11 @@
 
     function initWeekData() {
         let data = {};
-        for (let [key, name] of Object.entries(days)) {
-            data[key] = { name, tasks: [] };
-            for (let s of defaultSubjects) {
-                data[key].tasks.push({ ...s, completed: false, topic: "", hoursStudied: 0 });
-            }
+        for (let [key, day] of Object.entries(fullSchedule)) {
+            data[key] = {
+                name: day.name,
+                tasks: day.tasks.map(t => ({ ...t, completed: false, topic: "", hoursStudied: 0 }))
+            };
         }
         return data;
     }
@@ -463,8 +510,6 @@
     function saveLocal() {
         if (currentUser) {
             localStorage.setItem(`planner_${currentUser}_${currentWeekId}`, JSON.stringify(currentWeekData));
-            localStorage.setItem(`userData_${currentUser}`, JSON.stringify({ name: currentUser, lastUpdate: Date.now() }));
-            // Disparar evento para outras abas
             localStorage.setItem('ranking_update', Date.now().toString());
         }
     }
@@ -547,8 +592,11 @@
     function addSubject(day) {
         let name = prompt("Nome da matéria:");
         if (!name) return;
+        let duration = prompt("Duração (ex: 1h🔥 Pesado):", "1h✨ Leve");
+        let badge = prompt("Prioridade (Crítica/Alta/Média):", "Média");
+        let badgeClass = badge === "Crítica" ? "badge-critical" : (badge === "Alta" ? "badge-high" : "badge-medium");
         currentWeekData[day].tasks.push({
-            name, duration: "1h✨", badge: "Média", badgeClass: "badge-medium",
+            name, duration, badge, badgeClass,
             completed: false, topic: "", hoursStudied: 0
         });
         saveLocal();
@@ -556,7 +604,7 @@
     }
 
     function deleteSubject(day, idx) {
-        if (confirm("Remover?")) {
+        if (confirm("Remover esta matéria?")) {
             currentWeekData[day].tasks.splice(idx, 1);
             saveLocal();
             renderGrid();
@@ -597,24 +645,29 @@
             let card = document.createElement('div');
             card.className = 'day-card';
             card.innerHTML = `
-                <div class="day-header"><span class="day-name">${day.name}</span><span>${completed}/${day.tasks.length} ✓</span></div>
+                <div class="day-header">
+                    <span class="day-name">${day.name}</span>
+                    <span class="day-completed">${completed}/${day.tasks.length} concluído</span>
+                </div>
                 ${day.tasks.map((task, idx) => `
                     <div class="task-item ${task.completed ? 'completed' : ''}">
                         <div class="task-header">
                             <input type="checkbox" class="task-checkbox" data-day="${dayKey}" data-idx="${idx}" ${task.completed ? 'checked' : ''}>
                             <span class="task-name" data-day="${dayKey}" data-idx="${idx}" data-timer>${task.name}</span>
-                            <span>${task.duration}</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:12px; padding:2px 8px;">🗑️</button>
+                            <span class="task-duration">${task.duration}</span>
+                            <span class="badge ${task.badgeClass}">${task.badge}</span>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:20px; padding:2px 8px; cursor:pointer;">🗑️</button>
                         </div>
                         <div class="hours-studied">
-                            <span>⏱️ ${task.hoursStudied.toFixed(1)}h</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5</button>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1</button>
+                            <span>⏱️ Horas: ${task.hoursStudied.toFixed(1)}h</span>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5h</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1h</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="2">+2h</button>
                         </div>
-                        <div class="task-topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Adicionar tópico"}</div>
+                        <div class="task-topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Clique para adicionar tópico..."}</div>
                     </div>
                 `).join('')}
-                <button class="add-subject-btn" data-day="${dayKey}">+ Matéria</button>
+                <button class="add-subject-btn" data-day="${dayKey}">+ Adicionar Matéria</button>
             `;
             grid.appendChild(card);
         }
@@ -623,8 +676,8 @@
 
     function attachEvents() {
         document.querySelectorAll('.task-checkbox').forEach(cb => {
-            cb.onchange = (e) => {
-                let day = cb.dataset.day, idx = cb.dataset.idx;
+            cb.onchange = () => {
+                let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
                 currentWeekData[day].tasks[idx].completed = cb.checked;
                 saveLocal();
                 renderGrid();
@@ -648,7 +701,7 @@
         });
         document.querySelectorAll('.task-topic').forEach(topic => {
             topic.onclick = function() {
-                let day = this.dataset.day, idx = this.dataset.idx;
+                let day = this.dataset.day, idx = parseInt(this.dataset.idx);
                 let input = document.createElement('input');
                 input.value = currentWeekData[day].tasks[idx].topic || '';
                 input.style.width = '100%';
@@ -656,6 +709,7 @@
                 input.style.color = 'var(--text-primary)';
                 input.style.border = 'none';
                 input.style.padding = '4px';
+                input.style.borderRadius = '8px';
                 this.replaceWith(input);
                 input.focus();
                 input.onblur = () => {
@@ -663,6 +717,7 @@
                     saveLocal();
                     renderGrid();
                 };
+                input.onkeypress = (e) => { if (e.key === 'Enter') input.blur(); };
             };
         });
     }
@@ -706,7 +761,7 @@
     }
 
     function resetTimer() {
-        if (confirm('Zerar timer?')) {
+        if (confirm('Zerar o timer?')) {
             pauseTimer();
             timerSeconds = 0;
             updateTimerDisplay();
@@ -714,7 +769,7 @@
     }
 
     function resetWeek() {
-        if (confirm('Resetar tudo?')) {
+        if (confirm('Resetar todo o progresso da semana?')) {
             for (let day in currentWeekData) {
                 for (let task of currentWeekData[day].tasks) {
                     task.completed = false;
