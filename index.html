@@ -177,7 +177,7 @@
         .topic-name { flex: 1; font-size: 0.85rem; cursor: pointer; }
         .topic-name.completed { text-decoration: line-through; opacity: 0.7; }
         
-        /* CRONOGRAMA SEMANAL */
+        /* CRONOGRAMA SEMANAL (APENAS MATÉRIAS) */
         .weekly-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -190,7 +190,7 @@
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 15px;
-            min-width: 280px;
+            min-width: 260px;
         }
         .day-header {
             display: flex;
@@ -288,7 +288,7 @@
             <button class="timer-btn pause" id="pauseTimerBtn">⏸ Pausar</button>
             <button class="timer-btn reset" id="resetTimerBtn">⏹ Zerar</button>
         </div>
-        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome do tópico no checklist ou na grade para estudar</div>
+        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome da matéria no cronograma ou no tópico no checklist para estudar</div>
     </div>
 
     <div class="metrics">
@@ -297,7 +297,7 @@
         <div class="metric-card"><h3>📊 Total Semana</h3><div class="value" id="weeklyTime">0h</div></div>
     </div>
 
-    <!-- CHECKLIST DE CONTEÚDOS -->
+    <!-- CHECKLIST DE CONTEÚDOS (DETALHADO) -->
     <div class="checklist-section" id="checklistSection" style="display: none;">
         <div class="checklist-header">
             <h2>📋 Checklist de Conteúdos</h2>
@@ -306,28 +306,28 @@
         <div id="checklistContainer"></div>
     </div>
 
-    <!-- CRONOGRAMA SEMANAL -->
+    <!-- CRONOGRAMA SEMANAL (APENAS MATÉRIAS) -->
     <div class="weekly-grid" id="weeklyGrid"><div class="loading">Faça login</div></div>
     <button class="reset-btn" id="resetBtn">🔄 Resetar Progresso da Semana</button>
     <div class="motivation">🎯 Medicina na Federal ou Estadual<br>Consistência + Disciplina = Aprovação! 💪</div>
 </div>
 
 <script>
-    // ========== CRONOGRAMA DEFINITIVO ==========
+    // ========== CRONOGRAMA APENAS COM MATÉRIAS (conforme sua ordem) ==========
     const fixedSchedule = {
         seg: { 
             name: "SEGUNDA", 
             tasks: [
-                { name: "Matemática", duration: "🔥 Pesado", badge: "pesado" },
-                { name: "Biologia", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Matemática (pesado)", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Biologia (pesado)", duration: "🔥 Pesado", badge: "pesado" },
                 { name: "Português (interpretação)", duration: "✨ Leve", badge: "leve" }
             ]
         },
         ter: { 
             name: "TERÇA", 
             tasks: [
-                { name: "Química", duration: "🔥 Pesado", badge: "pesado" },
-                { name: "Física", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Química (pesado)", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Física (pesado)", duration: "🔥 Pesado", badge: "pesado" },
                 { name: "Matemática (questões)", duration: "✨ Leve", badge: "leve" }
             ]
         },
@@ -377,7 +377,7 @@
         }
     };
 
-    // ========== CONTEÚDOS DO CHECKLIST ==========
+    // ========== CONTEÚDOS DO CHECKLIST (DETALHADOS) ==========
     const contentsBySubject = {
         "📐 Matemática": [
             "Transformações de Gráficos",
@@ -596,7 +596,7 @@
         });
     }
 
-    // ========== CRONOGRAMA FIXO ==========
+    // ========== CRONOGRAMA (APENAS MATÉRIAS) ==========
     function renderFixedGrid() {
         let grid = document.getElementById('weeklyGrid');
         if (!weekData) {
