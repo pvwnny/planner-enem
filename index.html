@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM Medicina - Cronograma 10/10</title>
+    <title>Planner ENEM - Cronograma + Checklist</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -110,6 +110,73 @@
         .progress-bar-container { background: rgba(0,0,0,0.5); border-radius: 10px; height: 10px; margin-top: 10px; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #e63946, #f1c40f); transition: width 0.3s ease; }
         
+        /* CHECKLIST DE CONTEÚDOS */
+        .checklist-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1c40f;
+        }
+        .checklist-header h2 { color: #f1c40f; }
+        .global-progress {
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .subject-group {
+            margin-bottom: 25px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            padding: 15px;
+        }
+        .subject-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .subject-progress {
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.5);
+            padding: 3px 10px;
+            border-radius: 15px;
+        }
+        .topics-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+        }
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .topic-item:hover { background: rgba(255,255,255,0.1); }
+        .topic-item.completed { background: rgba(46,204,113,0.2); border-left: 3px solid #2ecc71; }
+        .topic-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #2ecc71; }
+        .topic-name { flex: 1; font-size: 0.85rem; cursor: pointer; }
+        .topic-name.completed { text-decoration: line-through; opacity: 0.7; }
+        
         /* CRONOGRAMA SEMANAL */
         .weekly-grid {
             display: grid;
@@ -178,13 +245,14 @@
             background: rgba(255,255,255,0.1);
             border-radius: 20px;
         }
-        .focus-mode .ranking-section, .focus-mode .motivation, .focus-mode .metrics { display: none; }
+        .focus-mode .ranking-section, .focus-mode .motivation, .focus-mode .metrics, .focus-mode .checklist-section { display: none; }
         .focus-mode .weekly-grid { grid-template-columns: 1fr; }
         
         @media (max-width: 1024px) { .weekly-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 768px) {
             .weekly-grid { grid-template-columns: 1fr; }
             .timer-display { font-size: 2rem; }
+            .topics-list { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -192,7 +260,7 @@
 <div class="container">
     <div class="header">
         <h1>📚 Planner ENEM Medicina</h1>
-        <div class="subtitle">Cronograma 10/10 Final | Timer + Ranking</div>
+        <div class="subtitle">Cronograma 10/10 + Checklist de Conteúdos | Timer + Ranking</div>
     </div>
 
     <div class="user-section">
@@ -220,13 +288,22 @@
             <button class="timer-btn pause" id="pauseTimerBtn">⏸ Pausar</button>
             <button class="timer-btn reset" id="resetTimerBtn">⏹ Zerar</button>
         </div>
-        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome do tópico para estudar</div>
+        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome do tópico no checklist ou na grade para estudar</div>
     </div>
 
     <div class="metrics">
         <div class="metric-card"><h3>🎯 Progresso da Semana</h3><div class="value" id="weeklyProgress">0%</div><div class="progress-bar-container"><div class="progress-bar" id="progressBarFill"></div></div></div>
         <div class="metric-card"><h3>⏱️ Tempo Hoje</h3><div class="value" id="todayTime">0h</div></div>
         <div class="metric-card"><h3>📊 Total Semana</h3><div class="value" id="weeklyTime">0h</div></div>
+    </div>
+
+    <!-- CHECKLIST DE CONTEÚDOS -->
+    <div class="checklist-section" id="checklistSection" style="display: none;">
+        <div class="checklist-header">
+            <h2>📋 Checklist de Conteúdos</h2>
+            <div class="global-progress" id="globalProgress">Progresso Geral: 0%</div>
+        </div>
+        <div id="checklistContainer"></div>
     </div>
 
     <!-- CRONOGRAMA SEMANAL -->
@@ -236,7 +313,7 @@
 </div>
 
 <script>
-    // ========== CRONOGRAMA DEFINITIVO (FIEL) ==========
+    // ========== CRONOGRAMA DEFINITIVO ==========
     const fixedSchedule = {
         seg: { 
             name: "SEGUNDA", 
@@ -300,9 +377,89 @@
         }
     };
 
+    // ========== CONTEÚDOS DO CHECKLIST ==========
+    const contentsBySubject = {
+        "📐 Matemática": [
+            "Transformações de Gráficos",
+            "Estudo dos Sinais da Função",
+            "Inequação do Primeiro Grau",
+            "Inequação do Segundo Grau",
+            "Problemas com Inequações",
+            "Inequação Produto",
+            "Inequação Quociente",
+            "Sistemas de Inequações"
+        ],
+        "⚡ Física": [
+            "Polias I",
+            "Polias II",
+            "Força Elástica",
+            "Estática do Ponto Material",
+            "Centro de Massa",
+            "Estática do Corpo Extenso",
+            "Associação de Molas",
+            "Elevadores",
+            "Tombamento I",
+            "Tombamento II",
+            "Escorregamento"
+        ],
+        "🧬 Biologia": [
+            "Citoplasma: Características",
+            "Ribossomos",
+            "Retículos Endoplasmáticos",
+            "Aparelho de Golgi e Secreção Celular",
+            "Lisossomos e Digestão Celular",
+            "Peroxissomos, Glioxissomos e Vacúolos",
+            "Citoesqueleto e Centríolos"
+        ],
+        "🧪 Química": [
+            "Classificação dos Ácidos",
+            "Força dos Ácidos",
+            "Nomenclatura dos Ácidos",
+            "Bases",
+            "Teorias Ácido-Base",
+            "Resolução de Exercícios: Nomenclatura de Ácidos e Bases"
+        ],
+        "📜 História": [
+            "As Grandes Navegações",
+            "Reforma Protestante I",
+            "A Reforma Protestante II",
+            "Arte no Renascimento"
+        ],
+        "📖 Literatura": [
+            "Arcadismo"
+        ],
+        "📝 Português": [
+            "Transitividade Verbal",
+            "Tempos verbais e sentido",
+            "Verbos Regulares e Irregulares",
+            "Verbos de Ligação x Verbos Significativos"
+        ],
+        "🌍 Geografia": [
+            "Climas do Brasil: Tropical Típico e Semiárido",
+            "Climas do Brasil: Tropical Úmido e Equatorial",
+            "Climas do Brasil: Tropical de Altitude e Subtropical",
+            "Oceanos e Mares",
+            "Rios",
+            "Usos da Água I",
+            "Usos da Água II"
+        ],
+        "🏛️ Sociologia": [
+            "Diversidade Cultural",
+            "Relativismo I: O método etnográfico",
+            "Relativismo II: A proposta estruturalista",
+            "Relativismo II: O método comparativo-estruturalista"
+        ],
+        "🧠 Filosofia": [
+            "Formação da Filosofia Medieval",
+            "Santo Agostinho de Hipona",
+            "São Tomás de Aquino"
+        ]
+    };
+
     let currentUser = null;
+    let checklistData = {};
     let weekData = {};
-    let timerInterval = null, timerSeconds = 0, isRunning = false, currentTask = null;
+    let timerInterval = null, timerSeconds = 0, isRunning = false, currentTopic = null;
     let rankingInterval = null;
 
     // ========== INICIALIZAÇÃO ==========
@@ -324,6 +481,34 @@
         return data;
     }
 
+    function initChecklistData() {
+        let data = {};
+        for (let [subject, topics] of Object.entries(contentsBySubject)) {
+            data[subject] = {};
+            for (let topic of topics) {
+                data[subject][topic] = false;
+            }
+        }
+        return data;
+    }
+
+    function saveChecklist() {
+        if (currentUser) {
+            localStorage.setItem(`checklist_${currentUser}`, JSON.stringify(checklistData));
+        }
+    }
+
+    function loadChecklist() {
+        if (currentUser) {
+            let saved = localStorage.getItem(`checklist_${currentUser}`);
+            if (saved) {
+                checklistData = JSON.parse(saved);
+                return true;
+            }
+        }
+        return false;
+    }
+
     function saveFixedWeek() {
         if (currentUser) {
             localStorage.setItem(`fixed_${currentUser}`, JSON.stringify(weekData));
@@ -342,69 +527,76 @@
         }
     }
 
-    // ========== RANKING ==========
-    function updateRanking() {
-        let users = {};
-        for (let i = 0; i < localStorage.length; i++) {
-            let key = localStorage.key(i);
-            if (key && key.startsWith('fixed_')) {
-                let user = key.split('_')[1];
-                if (user) {
-                    let data = JSON.parse(localStorage.getItem(key));
-                    if (data) {
-                        let total = 0;
-                        for (let day of Object.values(data)) {
-                            for (let task of day.tasks) {
-                                total += task.hours || 0;
-                            }
-                        }
-                        users[user] = (users[user] || 0) + total;
-                    }
-                }
-            }
-        }
-        let ranking = Object.entries(users).map(([name, hours]) => ({ name, hours }));
-        ranking.sort((a,b) => b.hours - a.hours);
-        let html = ranking.length ? ranking.map((r,i) => `
-            <div class="ranking-item">
-                <span>${i+1}. ${r.name} ${r.name === currentUser ? '👑' : ''}</span>
-                <span>${r.hours.toFixed(1)}h</span>
-            </div>
-        `).join('') : '<div class="loading">Nenhum usuário ainda</div>';
-        document.getElementById('rankingList').innerHTML = html;
-    }
-
-    function startAutoRanking() {
-        if (rankingInterval) clearInterval(rankingInterval);
-        rankingInterval = setInterval(() => { if (currentUser) updateRanking(); }, 5000);
-    }
-
-    // ========== ESTATÍSTICAS ==========
-    function updateStats() {
-        let totalTasks = 0, completedTasks = 0;
-        for (let day of Object.values(weekData)) {
-            totalTasks += day.tasks.length;
-            completedTasks += day.tasks.filter(t => t.completed).length;
-        }
-        let percent = totalTasks ? Math.round(completedTasks / totalTasks * 100) : 0;
-        document.getElementById('weeklyProgress').innerHTML = percent + '%';
-        document.getElementById('progressBarFill').style.width = percent + '%';
+    // ========== RENDERIZAÇÃO DO CHECKLIST ==========
+    function renderChecklist() {
+        let container = document.getElementById('checklistContainer');
+        if (!container) return;
         
-        let today = new Date().getDay();
-        let map = {0:'dom',1:'seg',2:'ter',3:'qua',4:'qui',5:'sex',6:'sab'};
-        let todayKey = map[today];
-        let todayHours = 0, weekHours = 0;
-        for (let [dayKey, day] of Object.entries(weekData)) {
-            for (let task of day.tasks) {
-                weekHours += task.hours;
-                if (dayKey === todayKey) todayHours += task.hours;
+        let totalTopics = 0;
+        let completedTopics = 0;
+        
+        let html = '';
+        for (let [subject, topics] of Object.entries(contentsBySubject)) {
+            let subjectCompleted = 0;
+            let subjectTotal = Object.keys(topics).length;
+            
+            for (let topic of topics) {
+                let isCompleted = checklistData[subject]?.[topic] || false;
+                if (isCompleted) subjectCompleted++;
+                totalTopics++;
+                if (isCompleted) completedTopics++;
             }
+            
+            let subjectPercent = subjectTotal ? Math.round(subjectCompleted / subjectTotal * 100) : 0;
+            
+            html += `
+                <div class="subject-group">
+                    <div class="subject-title">
+                        <span>${subject}</span>
+                        <span class="subject-progress">${subjectCompleted}/${subjectTotal} (${subjectPercent}%)</span>
+                    </div>
+                    <div class="topics-list">
+                        ${topics.map(topic => {
+                            let isCompleted = checklistData[subject]?.[topic] || false;
+                            return `
+                                <div class="topic-item ${isCompleted ? 'completed' : ''}" data-subject="${subject}" data-topic="${topic}">
+                                    <input type="checkbox" class="topic-checkbox" data-subject="${subject}" data-topic="${topic}" ${isCompleted ? 'checked' : ''}>
+                                    <span class="topic-name ${isCompleted ? 'completed' : ''}" data-subject="${subject}" data-topic="${topic}" data-timer-topic>${topic}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
         }
-        document.getElementById('todayTime').innerHTML = todayHours.toFixed(1) + 'h';
-        document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1) + 'h';
+        
+        let globalPercent = totalTopics ? Math.round(completedTopics / totalTopics * 100) : 0;
+        document.getElementById('globalProgress').innerHTML = `📊 Progresso Geral: ${globalPercent}% (${completedTopics}/${totalTopics})`;
+        container.innerHTML = html;
+        
+        document.querySelectorAll('.topic-checkbox').forEach(cb => {
+            cb.addEventListener('change', function() {
+                let subject = this.dataset.subject;
+                let topic = this.dataset.topic;
+                if (!checklistData[subject]) checklistData[subject] = {};
+                checklistData[subject][topic] = this.checked;
+                saveChecklist();
+                renderChecklist();
+                updateStats();
+            });
+        });
+        document.querySelectorAll('[data-timer-topic]').forEach(el => {
+            el.addEventListener('click', function() {
+                let subject = this.dataset.subject;
+                let topic = this.dataset.topic;
+                currentTopic = { type: 'checklist', subject, topic };
+                document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${topic} (${subject})`;
+                startTimer();
+            });
+        });
     }
 
-    // ========== RENDERIZAÇÃO DO CRONOGRAMA ==========
+    // ========== CRONOGRAMA FIXO ==========
     function renderFixedGrid() {
         let grid = document.getElementById('weeklyGrid');
         if (!weekData) {
@@ -425,7 +617,7 @@
                     <div class="task-item ${task.completed ? 'completed' : ''}">
                         <div class="task-header">
                             <input type="checkbox" class="task-checkbox" data-day="${dayKey}" data-idx="${idx}" ${task.completed ? 'checked' : ''}>
-                            <span class="task-name" data-day="${dayKey}" data-idx="${idx}" data-timer>${task.name}</span>
+                            <span class="task-name" data-day="${dayKey}" data-idx="${idx}" data-timer-task>${task.name}</span>
                             <span class="task-duration">${task.duration}</span>
                             <span class="badge ${task.badge === 'pesado' ? 'badge-pesado' : 'badge-leve'}">${task.badge === 'pesado' ? '🔴 Crítica' : '🟢 Leve'}</span>
                             <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:20px; padding:2px 8px; cursor:pointer;">🗑️</button>
@@ -443,10 +635,10 @@
             `;
             grid.appendChild(card);
         }
-        attachEvents();
+        attachFixedEvents();
     }
 
-    function attachEvents() {
+    function attachFixedEvents() {
         document.querySelectorAll('.task-checkbox').forEach(cb => {
             cb.onchange = () => {
                 let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
@@ -456,11 +648,11 @@
                 updateStats();
             };
         });
-        document.querySelectorAll('[data-timer]').forEach(el => {
+        document.querySelectorAll('[data-timer-task]').forEach(el => {
             el.onclick = () => {
                 let day = el.dataset.day, idx = parseInt(el.dataset.idx);
                 let taskName = weekData[day].tasks[idx].name;
-                currentTask = { day, idx, name: taskName };
+                currentTopic = { type: 'fixed', day, idx, name: taskName };
                 document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${taskName}`;
                 startTimer();
             };
@@ -524,6 +716,67 @@
         });
     }
 
+    // ========== RANKING E ESTATÍSTICAS ==========
+    function updateRanking() {
+        let users = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            let key = localStorage.key(i);
+            if (key && key.startsWith('fixed_')) {
+                let user = key.split('_')[1];
+                if (user) {
+                    let data = JSON.parse(localStorage.getItem(key));
+                    if (data) {
+                        let total = 0;
+                        for (let day of Object.values(data)) {
+                            for (let task of day.tasks) {
+                                total += task.hours || 0;
+                            }
+                        }
+                        users[user] = (users[user] || 0) + total;
+                    }
+                }
+            }
+        }
+        let ranking = Object.entries(users).map(([name, hours]) => ({ name, hours }));
+        ranking.sort((a,b) => b.hours - a.hours);
+        let html = ranking.length ? ranking.map((r,i) => `
+            <div class="ranking-item">
+                <span>${i+1}. ${r.name} ${r.name === currentUser ? '👑' : ''}</span>
+                <span>${r.hours.toFixed(1)}h</span>
+            </div>
+        `).join('') : '<div class="loading">Nenhum usuário ainda</div>';
+        document.getElementById('rankingList').innerHTML = html;
+    }
+
+    function updateStats() {
+        let totalTasks = 0, completedTasks = 0;
+        for (let day of Object.values(weekData)) {
+            totalTasks += day.tasks.length;
+            completedTasks += day.tasks.filter(t => t.completed).length;
+        }
+        let percent = totalTasks ? Math.round(completedTasks / totalTasks * 100) : 0;
+        document.getElementById('weeklyProgress').innerHTML = percent + '%';
+        document.getElementById('progressBarFill').style.width = percent + '%';
+        
+        let today = new Date().getDay();
+        let map = {0:'dom',1:'seg',2:'ter',3:'qua',4:'qui',5:'sex',6:'sab'};
+        let todayKey = map[today];
+        let todayHours = 0, weekHours = 0;
+        for (let [dayKey, day] of Object.entries(weekData)) {
+            for (let task of day.tasks) {
+                weekHours += task.hours;
+                if (dayKey === todayKey) todayHours += task.hours;
+            }
+        }
+        document.getElementById('todayTime').innerHTML = todayHours.toFixed(1) + 'h';
+        document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1) + 'h';
+    }
+
+    function startAutoRanking() {
+        if (rankingInterval) clearInterval(rankingInterval);
+        rankingInterval = setInterval(() => { if (currentUser) updateRanking(); }, 5000);
+    }
+
     // ========== TIMER ==========
     function updateTimerDisplay() {
         let h = Math.floor(timerSeconds/3600), m = Math.floor((timerSeconds%3600)/60), s = timerSeconds%60;
@@ -575,6 +828,14 @@
         currentUser = name;
         document.getElementById('currentUserDisplay').innerHTML = `👤 ${name}`;
         document.getElementById('rankingSection').style.display = 'block';
+        document.getElementById('checklistSection').style.display = 'block';
+        
+        loadChecklist();
+        if (Object.keys(checklistData).length === 0) {
+            checklistData = initChecklistData();
+            saveChecklist();
+        }
+        renderChecklist();
         
         loadFixedWeek();
         renderFixedGrid();
