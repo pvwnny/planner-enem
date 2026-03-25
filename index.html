@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM - Cronograma Fixo + Checklist</title>
+    <title>Planner ENEM Medicina - Cronograma Final</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -177,7 +177,7 @@
         .topic-name { flex: 1; font-size: 0.85rem; cursor: pointer; }
         .topic-name.completed { text-decoration: line-through; opacity: 0.7; }
         
-        /* Cronograma fixo semanal (grade) */
+        /* CRONOGRAMA SEMANAL */
         .weekly-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -211,6 +211,10 @@
         .task-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .task-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #2ecc71; }
         .task-name { font-weight: bold; cursor: pointer; flex: 1; font-size: 0.85rem; }
+        .task-duration { font-size: 0.7rem; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 12px; }
+        .badge { font-size: 0.65rem; padding: 2px 8px; border-radius: 12px; }
+        .badge-pesado { background: #e63946; }
+        .badge-leve { background: #2ecc71; }
         .hours-studied { display: flex; gap: 8px; margin-top: 8px; font-size: 0.7rem; flex-wrap: wrap; }
         .hours-studied button { background: rgba(255,255,255,0.2); border: none; padding: 2px 8px; border-radius: 12px; cursor: pointer; color: white; }
         .task-topic { font-size: 0.7rem; color: #aaa; cursor: pointer; margin-top: 5px; padding: 4px; }
@@ -256,7 +260,7 @@
 <div class="container">
     <div class="header">
         <h1>📚 Planner ENEM Medicina</h1>
-        <div class="subtitle">Cronograma Semanal + Checklist de Conteúdos | Timer + Ranking</div>
+        <div class="subtitle">Cronograma 10/10 Final | Timer + Ranking</div>
     </div>
 
     <div class="user-section">
@@ -284,7 +288,7 @@
             <button class="timer-btn pause" id="pauseTimerBtn">⏸ Pausar</button>
             <button class="timer-btn reset" id="resetTimerBtn">⏹ Zerar</button>
         </div>
-        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome do tópico no checklist ou na grade para estudar</div>
+        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome do tópico para estudar</div>
     </div>
 
     <div class="metrics">
@@ -293,141 +297,80 @@
         <div class="metric-card"><h3>📊 Total Semana</h3><div class="value" id="weeklyTime">0h</div></div>
     </div>
 
-    <!-- CHECKLIST DE CONTEÚDOS ÚNICO -->
-    <div class="checklist-section" id="checklistSection" style="display: none;">
-        <div class="checklist-header">
-            <h2>📋 Checklist de Conteúdos</h2>
-            <div class="global-progress" id="globalProgress">Progresso Geral: 0%</div>
-        </div>
-        <div id="checklistContainer"></div>
-    </div>
-
-    <!-- CRONOGRAMA FIXO SEMANAL -->
+    <!-- CRONOGRAMA SEMANAL -->
     <div class="weekly-grid" id="weeklyGrid"><div class="loading">Faça login</div></div>
     <button class="reset-btn" id="resetBtn">🔄 Resetar Progresso da Semana</button>
     <div class="motivation">🎯 Medicina na Federal ou Estadual<br>Consistência + Disciplina = Aprovação! 💪</div>
 </div>
 
 <script>
-    // ========== CRONOGRAMA FIXO (original) ==========
+    // ========== CRONOGRAMA DEFINITIVO ==========
     const fixedSchedule = {
-        seg: { name: "SEGUNDA", foco: "📐 Matemática + ⚡ Física", tasks: [
-            "📐 Matemática: Transformações de Gráficos",
-            "📐 Matemática: Estudo dos Sinais da Função",
-            "📐 Matemática: Inequações",
-            "⚡ Física: Polias e Estática"
-        ] },
-        ter: { name: "TERÇA", foco: "🧬 Biologia + 🧪 Química", tasks: [
-            "🧬 Biologia: Citoplasma e Organelas",
-            "🧪 Química: Ácidos e Bases"
-        ] },
-        qua: { name: "QUARTA", foco: "📜 História + 📖 Literatura + 📝 Português", tasks: [
-            "📜 História: Navegações e Reforma",
-            "📖 Literatura: Arcadismo",
-            "📝 Português: Verbos"
-        ] },
-        qui: { name: "QUINTA", foco: "🌍 Geografia + 🏛️ Sociologia", tasks: [
-            "🌍 Geografia: Climas do Brasil e Hidrografia",
-            "🏛️ Sociologia: Diversidade Cultural e Relativismo"
-        ] },
-        sex: { name: "SEXTA", foco: "🧠 Filosofia + Revisão", tasks: [
-            "🧠 Filosofia: Medieval, Agostinho, Tomás de Aquino",
-            "🔄 Revisão dos conteúdos da semana"
-        ] },
-        sab: { name: "SÁBADO", foco: "📝 Exercícios e Simulado", tasks: [
-            "📝 Resolução de exercícios",
-            "📝 Simulado dos conteúdos estudados"
-        ] },
-        dom: { name: "DOMINGO", foco: "🔄 Revisão Leve", tasks: [
-            "🔄 Revisão dos pontos mais difíceis",
-            "📋 Planejamento da próxima semana"
-        ] }
-    };
-
-    // ========== CONTEÚDOS DO CHECKLIST ==========
-    // (você pode editar esta lista livremente)
-    const contentsBySubject = {
-        "📐 Matemática": [
-            "Transformações de Gráficos",
-            "Estudo dos Sinais da Função",
-            "Inequação do Primeiro Grau",
-            "Inequação do Segundo Grau",
-            "Problemas com Inequações",
-            "Inequação Produto",
-            "Inequação Quociente",
-            "Sistemas de Inequações"
-        ],
-        "⚡ Física": [
-            "Polias I",
-            "Polias II",
-            "Força Elástica",
-            "Estática do Ponto Material",
-            "Centro de Massa",
-            "Estática do Corpo Extenso",
-            "Associação de Molas",
-            "Elevadores",
-            "Tombamento I",
-            "Tombamento II",
-            "Escorregamento"
-        ],
-        "🧬 Biologia": [
-            "Citoplasma: Características",
-            "Ribossomos",
-            "Retículos Endoplasmáticos",
-            "Aparelho de Golgi e Secreção Celular",
-            "Lisossomos e Digestão Celular",
-            "Peroxissomos, Glioxissomos e Vacúolos",
-            "Citoesqueleto e Centríolos"
-        ],
-        "🧪 Química": [
-            "Classificação dos Ácidos",
-            "Força dos Ácidos",
-            "Nomenclatura dos Ácidos",
-            "Bases",
-            "Teorias Ácido-Base",
-            "Resolução de Exercícios: Nomenclatura de Ácidos e Bases"
-        ],
-        "📜 História": [
-            "As Grandes Navegações",
-            "Reforma Protestante I",
-            "A Reforma Protestante II",
-            "Arte no Renascimento"
-        ],
-        "📖 Literatura": [
-            "Arcadismo"
-        ],
-        "📝 Português": [
-            "Transitividade Verbal",
-            "Tempos verbais e sentido",
-            "Verbos Regulares e Irregulares",
-            "Verbos de Ligação x Verbos Significativos"
-        ],
-        "🌍 Geografia": [
-            "Climas do Brasil: Tropical Típico e Semiárido",
-            "Climas do Brasil: Tropical Úmido e Equatorial",
-            "Climas do Brasil: Tropical de Altitude e Subtropical",
-            "Oceanos e Mares",
-            "Rios",
-            "Usos da Água I",
-            "Usos da Água II"
-        ],
-        "🏛️ Sociologia": [
-            "Diversidade Cultural",
-            "Relativismo I: O método etnográfico",
-            "Relativismo II: A proposta estruturalista",
-            "Relativismo II: O método comparativo-estruturalista"
-        ],
-        "🧠 Filosofia": [
-            "Formação da Filosofia Medieval",
-            "Santo Agostinho de Hipona",
-            "São Tomás de Aquino"
-        ]
+        seg: { 
+            name: "SEGUNDA", 
+            tasks: [
+                { name: "Matemática", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Biologia", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Português (interpretação)", duration: "✨ Leve", badge: "leve" }
+            ]
+        },
+        ter: { 
+            name: "TERÇA", 
+            tasks: [
+                { name: "Química", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Física", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Matemática (questões)", duration: "✨ Leve", badge: "leve" }
+            ]
+        },
+        qua: { 
+            name: "QUARTA", 
+            tasks: [
+                { name: "História", duration: "✨ Leve", badge: "leve" },
+                { name: "Geografia", duration: "✨ Leve", badge: "leve" },
+                { name: "Matemática", duration: "✨ Leve", badge: "leve" }
+            ]
+        },
+        qui: { 
+            name: "QUINTA", 
+            tasks: [
+                { name: "Redação (curso)", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Física", duration: "✨ Leve", badge: "leve" },
+                { name: "Biologia", duration: "✨ Leve", badge: "leve" },
+                { name: "Filosofia (30 min)", duration: "✨ Leve", badge: "leve" }
+            ]
+        },
+        sex: { 
+            name: "SEXTA", 
+            tasks: [
+                { name: "Química", duration: "✨ Leve", badge: "leve" },
+                { name: "Matemática", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Sociologia (30 min)", duration: "✨ Leve", badge: "leve" },
+                { name: "Revisão", duration: "✨ Leve", badge: "leve" }
+            ]
+        },
+        sab: { 
+            name: "SÁBADO", 
+            tasks: [
+                { name: "Matemática (1h30)", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Biologia (1h30)", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Química (1h)", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Física (1h)", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Questões", duration: "✨ Leve", badge: "leve" }
+            ]
+        },
+        dom: { 
+            name: "DOMINGO", 
+            tasks: [
+                { name: "Redação", duration: "🔥 Pesado", badge: "pesado" },
+                { name: "Humanas (leve)", duration: "✨ Leve", badge: "leve" },
+                { name: "Revisão Geral", duration: "✨ Leve", badge: "leve" }
+            ]
+        }
     };
 
     let currentUser = null;
-    let checklistData = {};
     let weekData = {};
-    let timerInterval = null, timerSeconds = 0, isRunning = false, currentTopic = null;
+    let timerInterval = null, timerSeconds = 0, isRunning = false, currentTask = null;
     let rankingInterval = null;
 
     // ========== INICIALIZAÇÃO ==========
@@ -436,39 +379,17 @@
         for (let [key, day] of Object.entries(fixedSchedule)) {
             data[key] = {
                 name: day.name,
-                foco: day.foco,
-                tasks: day.tasks.map(t => ({ name: t, completed: false, topic: "", hours: 0 }))
+                tasks: day.tasks.map(t => ({ 
+                    name: t.name, 
+                    duration: t.duration, 
+                    badge: t.badge,
+                    completed: false, 
+                    topic: "", 
+                    hours: 0 
+                }))
             };
         }
         return data;
-    }
-
-    function initChecklistData() {
-        let data = {};
-        for (let [subject, topics] of Object.entries(contentsBySubject)) {
-            data[subject] = {};
-            for (let topic of topics) {
-                data[subject][topic] = false;
-            }
-        }
-        return data;
-    }
-
-    function saveChecklist() {
-        if (currentUser) {
-            localStorage.setItem(`checklist_${currentUser}`, JSON.stringify(checklistData));
-        }
-    }
-
-    function loadChecklist() {
-        if (currentUser) {
-            let saved = localStorage.getItem(`checklist_${currentUser}`);
-            if (saved) {
-                checklistData = JSON.parse(saved);
-                return true;
-            }
-        }
-        return false;
     }
 
     function saveFixedWeek() {
@@ -489,191 +410,7 @@
         }
     }
 
-    // ========== RENDERIZAÇÃO DO CHECKLIST ==========
-    function renderChecklist() {
-        let container = document.getElementById('checklistContainer');
-        if (!container) return;
-        
-        let totalTopics = 0;
-        let completedTopics = 0;
-        
-        let html = '';
-        for (let [subject, topics] of Object.entries(contentsBySubject)) {
-            let subjectCompleted = 0;
-            let subjectTotal = Object.keys(topics).length;
-            
-            for (let topic of topics) {
-                let isCompleted = checklistData[subject]?.[topic] || false;
-                if (isCompleted) subjectCompleted++;
-                totalTopics++;
-                if (isCompleted) completedTopics++;
-            }
-            
-            let subjectPercent = subjectTotal ? Math.round(subjectCompleted / subjectTotal * 100) : 0;
-            
-            html += `
-                <div class="subject-group">
-                    <div class="subject-title">
-                        <span>${subject}</span>
-                        <span class="subject-progress">${subjectCompleted}/${subjectTotal} (${subjectPercent}%)</span>
-                    </div>
-                    <div class="topics-list">
-                        ${topics.map(topic => {
-                            let isCompleted = checklistData[subject]?.[topic] || false;
-                            return `
-                                <div class="topic-item ${isCompleted ? 'completed' : ''}" data-subject="${subject}" data-topic="${topic}">
-                                    <input type="checkbox" class="topic-checkbox" data-subject="${subject}" data-topic="${topic}" ${isCompleted ? 'checked' : ''}>
-                                    <span class="topic-name ${isCompleted ? 'completed' : ''}" data-subject="${subject}" data-topic="${topic}" data-timer-topic>${topic}</span>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
-        
-        let globalPercent = totalTopics ? Math.round(completedTopics / totalTopics * 100) : 0;
-        document.getElementById('globalProgress').innerHTML = `📊 Progresso Geral: ${globalPercent}% (${completedTopics}/${totalTopics})`;
-        container.innerHTML = html;
-        
-        // Eventos do checklist
-        document.querySelectorAll('.topic-checkbox').forEach(cb => {
-            cb.addEventListener('change', function() {
-                let subject = this.dataset.subject;
-                let topic = this.dataset.topic;
-                if (!checklistData[subject]) checklistData[subject] = {};
-                checklistData[subject][topic] = this.checked;
-                saveChecklist();
-                renderChecklist();
-                updateStats();
-            });
-        });
-        document.querySelectorAll('[data-timer-topic]').forEach(el => {
-            el.addEventListener('click', function() {
-                let subject = this.dataset.subject;
-                let topic = this.dataset.topic;
-                currentTopic = { type: 'checklist', subject, topic };
-                document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${topic} (${subject})`;
-                startTimer();
-            });
-        });
-    }
-
-    // ========== CRONOGRAMA FIXO ==========
-    function renderFixedGrid() {
-        let grid = document.getElementById('weeklyGrid');
-        if (!weekData) {
-            grid.innerHTML = '<div class="loading">Faça login para começar</div>';
-            return;
-        }
-        grid.innerHTML = '';
-        for (let [dayKey, day] of Object.entries(weekData)) {
-            let completed = day.tasks.filter(t => t.completed).length;
-            let card = document.createElement('div');
-            card.className = 'day-card';
-            card.innerHTML = `
-                <div class="day-header">
-                    <span class="day-name">${day.name}</span>
-                    <span class="day-completed">${completed}/${day.tasks.length} concluído</span>
-                </div>
-                <div style="font-size:0.7rem; margin-bottom:10px; color:#f1c40f;">${day.foco}</div>
-                ${day.tasks.map((task, idx) => `
-                    <div class="task-item ${task.completed ? 'completed' : ''}">
-                        <div class="task-header">
-                            <input type="checkbox" class="task-checkbox" data-day="${dayKey}" data-idx="${idx}" ${task.completed ? 'checked' : ''}>
-                            <span class="task-name" data-day="${dayKey}" data-idx="${idx}" data-timer-task>${task.name}</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:20px; padding:2px 8px; cursor:pointer;">🗑️</button>
-                        </div>
-                        <div class="hours-studied">
-                            <span>⏱️ Horas: ${task.hours.toFixed(1)}h</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5h</button>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1h</button>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="2">+2h</button>
-                        </div>
-                        <div class="task-topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Clique para adicionar anotações..."}</div>
-                    </div>
-                `).join('')}
-                <button class="add-subject-btn" data-day="${dayKey}">+ Adicionar Tópico</button>
-            `;
-            grid.appendChild(card);
-        }
-        attachFixedEvents();
-    }
-
-    function attachFixedEvents() {
-        document.querySelectorAll('.task-checkbox').forEach(cb => {
-            cb.onchange = () => {
-                let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
-                weekData[day].tasks[idx].completed = cb.checked;
-                saveFixedWeek();
-                renderFixedGrid();
-                updateStats();
-            };
-        });
-        document.querySelectorAll('[data-timer-task]').forEach(el => {
-            el.onclick = () => {
-                let day = el.dataset.day, idx = parseInt(el.dataset.idx);
-                let taskName = weekData[day].tasks[idx].name;
-                currentTopic = { type: 'fixed', day, idx, name: taskName };
-                document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${taskName}`;
-                startTimer();
-            };
-        });
-        document.querySelectorAll('[data-delete]').forEach(btn => {
-            btn.onclick = () => {
-                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
-                if (confirm('Remover este tópico?')) {
-                    weekData[day].tasks.splice(idx, 1);
-                    saveFixedWeek();
-                    renderFixedGrid();
-                }
-            };
-        });
-        document.querySelectorAll('[data-hours]').forEach(btn => {
-            btn.onclick = () => {
-                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
-                let hours = parseFloat(btn.dataset.hours);
-                weekData[day].tasks[idx].hours += hours;
-                saveFixedWeek();
-                renderFixedGrid();
-                updateRanking();
-                updateStats();
-            };
-        });
-        document.querySelectorAll('.add-subject-btn').forEach(btn => {
-            btn.onclick = () => {
-                let day = btn.dataset.day;
-                let name = prompt('Digite o nome do tópico:');
-                if (name) {
-                    weekData[day].tasks.push({ name, completed: false, topic: "", hours: 0 });
-                    saveFixedWeek();
-                    renderFixedGrid();
-                }
-            };
-        });
-        document.querySelectorAll('.task-topic').forEach(topic => {
-            topic.onclick = function() {
-                let day = this.dataset.day, idx = parseInt(this.dataset.idx);
-                let input = document.createElement('input');
-                input.value = weekData[day].tasks[idx].topic || '';
-                input.style.width = '100%';
-                input.style.padding = '4px';
-                input.style.borderRadius = '8px';
-                input.style.background = 'rgba(255,255,255,0.2)';
-                input.style.color = 'white';
-                input.style.border = 'none';
-                this.replaceWith(input);
-                input.focus();
-                input.onblur = () => {
-                    weekData[day].tasks[idx].topic = input.value;
-                    saveFixedWeek();
-                    renderFixedGrid();
-                };
-            };
-        });
-    }
-
-    // ========== RANKING E ESTATÍSTICAS ==========
+    // ========== RANKING ==========
     function updateRanking() {
         let users = {};
         for (let i = 0; i < localStorage.length; i++) {
@@ -705,8 +442,13 @@
         document.getElementById('rankingList').innerHTML = html;
     }
 
+    function startAutoRanking() {
+        if (rankingInterval) clearInterval(rankingInterval);
+        rankingInterval = setInterval(() => { if (currentUser) updateRanking(); }, 5000);
+    }
+
+    // ========== ESTATÍSTICAS ==========
     function updateStats() {
-        // Progresso da semana fixa
         let totalTasks = 0, completedTasks = 0;
         for (let day of Object.values(weekData)) {
             totalTasks += day.tasks.length;
@@ -716,7 +458,6 @@
         document.getElementById('weeklyProgress').innerHTML = percent + '%';
         document.getElementById('progressBarFill').style.width = percent + '%';
         
-        // Horas de hoje e da semana
         let today = new Date().getDay();
         let map = {0:'dom',1:'seg',2:'ter',3:'qua',4:'qui',5:'sex',6:'sab'};
         let todayKey = map[today];
@@ -731,9 +472,124 @@
         document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1) + 'h';
     }
 
-    function startAutoRanking() {
-        if (rankingInterval) clearInterval(rankingInterval);
-        rankingInterval = setInterval(() => { if (currentUser) updateRanking(); }, 5000);
+    // ========== RENDERIZAÇÃO DO CRONOGRAMA ==========
+    function renderFixedGrid() {
+        let grid = document.getElementById('weeklyGrid');
+        if (!weekData) {
+            grid.innerHTML = '<div class="loading">Faça login para começar</div>';
+            return;
+        }
+        grid.innerHTML = '';
+        for (let [dayKey, day] of Object.entries(weekData)) {
+            let completed = day.tasks.filter(t => t.completed).length;
+            let card = document.createElement('div');
+            card.className = 'day-card';
+            card.innerHTML = `
+                <div class="day-header">
+                    <span class="day-name">${day.name}</span>
+                    <span class="day-completed">${completed}/${day.tasks.length} concluído</span>
+                </div>
+                ${day.tasks.map((task, idx) => `
+                    <div class="task-item ${task.completed ? 'completed' : ''}">
+                        <div class="task-header">
+                            <input type="checkbox" class="task-checkbox" data-day="${dayKey}" data-idx="${idx}" ${task.completed ? 'checked' : ''}>
+                            <span class="task-name" data-day="${dayKey}" data-idx="${idx}" data-timer>${task.name}</span>
+                            <span class="task-duration">${task.duration}</span>
+                            <span class="badge ${task.badge === 'pesado' ? 'badge-pesado' : 'badge-leve'}">${task.badge === 'pesado' ? '🔴 Crítica' : '🟢 Leve'}</span>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:20px; padding:2px 8px; cursor:pointer;">🗑️</button>
+                        </div>
+                        <div class="hours-studied">
+                            <span>⏱️ Horas: ${task.hours.toFixed(1)}h</span>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5h</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1h</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="2">+2h</button>
+                        </div>
+                        <div class="task-topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Clique para adicionar anotações..."}</div>
+                    </div>
+                `).join('')}
+                <button class="add-subject-btn" data-day="${dayKey}">+ Adicionar Tópico</button>
+            `;
+            grid.appendChild(card);
+        }
+        attachEvents();
+    }
+
+    function attachEvents() {
+        document.querySelectorAll('.task-checkbox').forEach(cb => {
+            cb.onchange = () => {
+                let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
+                weekData[day].tasks[idx].completed = cb.checked;
+                saveFixedWeek();
+                renderFixedGrid();
+                updateStats();
+            };
+        });
+        document.querySelectorAll('[data-timer]').forEach(el => {
+            el.onclick = () => {
+                let day = el.dataset.day, idx = parseInt(el.dataset.idx);
+                let taskName = weekData[day].tasks[idx].name;
+                currentTask = { day, idx, name: taskName };
+                document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${taskName}`;
+                startTimer();
+            };
+        });
+        document.querySelectorAll('[data-delete]').forEach(btn => {
+            btn.onclick = () => {
+                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
+                if (confirm('Remover este tópico?')) {
+                    weekData[day].tasks.splice(idx, 1);
+                    saveFixedWeek();
+                    renderFixedGrid();
+                }
+            };
+        });
+        document.querySelectorAll('[data-hours]').forEach(btn => {
+            btn.onclick = () => {
+                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
+                let hours = parseFloat(btn.dataset.hours);
+                weekData[day].tasks[idx].hours += hours;
+                saveFixedWeek();
+                renderFixedGrid();
+                updateRanking();
+                updateStats();
+            };
+        });
+        document.querySelectorAll('.add-subject-btn').forEach(btn => {
+            btn.onclick = () => {
+                let day = btn.dataset.day;
+                let name = prompt('Digite o nome do tópico:');
+                if (name) {
+                    let duration = prompt('Duração (ex: 1h🔥 Pesado):', '✨ Leve');
+                    let badge = duration.includes('Pesado') ? 'pesado' : 'leve';
+                    weekData[day].tasks.push({ 
+                        name, duration, badge,
+                        completed: false, topic: "", hours: 0 
+                    });
+                    saveFixedWeek();
+                    renderFixedGrid();
+                }
+            };
+        });
+        document.querySelectorAll('.task-topic').forEach(topic => {
+            topic.onclick = function() {
+                let day = this.dataset.day, idx = parseInt(this.dataset.idx);
+                let input = document.createElement('input');
+                input.value = weekData[day].tasks[idx].topic || '';
+                input.style.width = '100%';
+                input.style.padding = '4px';
+                input.style.borderRadius = '8px';
+                input.style.background = 'rgba(255,255,255,0.2)';
+                input.style.color = 'white';
+                input.style.border = 'none';
+                this.replaceWith(input);
+                input.focus();
+                input.onblur = () => {
+                    weekData[day].tasks[idx].topic = input.value;
+                    saveFixedWeek();
+                    renderFixedGrid();
+                };
+            };
+        });
     }
 
     // ========== TIMER ==========
@@ -748,7 +604,6 @@
         timerInterval = setInterval(() => {
             timerSeconds++;
             updateTimerDisplay();
-            // Não adiciona horas automaticamente para não conflitar com os botões manuais
         }, 1000);
     }
 
@@ -788,14 +643,6 @@
         currentUser = name;
         document.getElementById('currentUserDisplay').innerHTML = `👤 ${name}`;
         document.getElementById('rankingSection').style.display = 'block';
-        document.getElementById('checklistSection').style.display = 'block';
-        
-        loadChecklist();
-        if (Object.keys(checklistData).length === 0) {
-            checklistData = initChecklistData();
-            saveChecklist();
-        }
-        renderChecklist();
         
         loadFixedWeek();
         renderFixedGrid();
