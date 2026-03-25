@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM - Cronograma + Checklist</title>
+    <title>Planner ENEM - Cronograma 10/10</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -177,7 +177,7 @@
         .topic-name { flex: 1; font-size: 0.85rem; cursor: pointer; }
         .topic-name.completed { text-decoration: line-through; opacity: 0.7; }
         
-        /* CRONOGRAMA SEMANAL (APENAS MATÉRIAS) */
+        /* CRONOGRAMA SEMANAL */
         .weekly-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -190,7 +190,7 @@
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 15px;
-            min-width: 260px;
+            min-width: 280px;
         }
         .day-header {
             display: flex;
@@ -260,7 +260,7 @@
 <div class="container">
     <div class="header">
         <h1>📚 Planner ENEM Medicina</h1>
-        <div class="subtitle">Cronograma 10/10 + Checklist de Conteúdos | Timer + Ranking</div>
+        <div class="subtitle">Cronograma 10/10 + Checklist | Timer + Ranking</div>
     </div>
 
     <div class="user-section">
@@ -306,14 +306,14 @@
         <div id="checklistContainer"></div>
     </div>
 
-    <!-- CRONOGRAMA SEMANAL (APENAS MATÉRIAS) -->
+    <!-- CRONOGRAMA SEMANAL -->
     <div class="weekly-grid" id="weeklyGrid"><div class="loading">Faça login</div></div>
     <button class="reset-btn" id="resetBtn">🔄 Resetar Progresso da Semana</button>
     <div class="motivation">🎯 Medicina na Federal ou Estadual<br>Consistência + Disciplina = Aprovação! 💪</div>
 </div>
 
 <script>
-    // ========== CRONOGRAMA APENAS COM MATÉRIAS (conforme sua ordem) ==========
+    // ========== CRONOGRAMA CONFORME VOCÊ PEDIU ==========
     const fixedSchedule = {
         seg: { 
             name: "SEGUNDA", 
@@ -377,7 +377,7 @@
         }
     };
 
-    // ========== CONTEÚDOS DO CHECKLIST (DETALHADOS) ==========
+    // ========== CONTEÚDOS DO CHECKLIST ==========
     const contentsBySubject = {
         "📐 Matemática": [
             "Transformações de Gráficos",
@@ -493,62 +493,42 @@
     }
 
     function saveChecklist() {
-        if (currentUser) {
-            localStorage.setItem(`checklist_${currentUser}`, JSON.stringify(checklistData));
-        }
+        if (currentUser) localStorage.setItem(`checklist_${currentUser}`, JSON.stringify(checklistData));
     }
 
     function loadChecklist() {
-        if (currentUser) {
-            let saved = localStorage.getItem(`checklist_${currentUser}`);
-            if (saved) {
-                checklistData = JSON.parse(saved);
-                return true;
-            }
-        }
+        if (!currentUser) return false;
+        let saved = localStorage.getItem(`checklist_${currentUser}`);
+        if (saved) { checklistData = JSON.parse(saved); return true; }
         return false;
     }
 
     function saveFixedWeek() {
-        if (currentUser) {
-            localStorage.setItem(`fixed_${currentUser}`, JSON.stringify(weekData));
-        }
+        if (currentUser) localStorage.setItem(`fixed_${currentUser}`, JSON.stringify(weekData));
     }
 
     function loadFixedWeek() {
-        if (currentUser) {
-            let saved = localStorage.getItem(`fixed_${currentUser}`);
-            if (saved) {
-                weekData = JSON.parse(saved);
-            } else {
-                weekData = initFixedWeek();
-                saveFixedWeek();
-            }
-        }
+        if (!currentUser) return;
+        let saved = localStorage.getItem(`fixed_${currentUser}`);
+        if (saved) weekData = JSON.parse(saved);
+        else { weekData = initFixedWeek(); saveFixedWeek(); }
     }
 
-    // ========== RENDERIZAÇÃO DO CHECKLIST ==========
+    // ========== RENDER CHECKLIST ==========
     function renderChecklist() {
         let container = document.getElementById('checklistContainer');
         if (!container) return;
-        
-        let totalTopics = 0;
-        let completedTopics = 0;
-        
+        let totalTopics = 0, completedTopics = 0;
         let html = '';
         for (let [subject, topics] of Object.entries(contentsBySubject)) {
             let subjectCompleted = 0;
-            let subjectTotal = Object.keys(topics).length;
-            
+            let subjectTotal = topics.length;
             for (let topic of topics) {
-                let isCompleted = checklistData[subject]?.[topic] || false;
-                if (isCompleted) subjectCompleted++;
+                if (checklistData[subject]?.[topic]) subjectCompleted++;
                 totalTopics++;
-                if (isCompleted) completedTopics++;
+                if (checklistData[subject]?.[topic]) completedTopics++;
             }
-            
             let subjectPercent = subjectTotal ? Math.round(subjectCompleted / subjectTotal * 100) : 0;
-            
             html += `
                 <div class="subject-group">
                     <div class="subject-title">
@@ -569,15 +549,13 @@
                 </div>
             `;
         }
-        
         let globalPercent = totalTopics ? Math.round(completedTopics / totalTopics * 100) : 0;
         document.getElementById('globalProgress').innerHTML = `📊 Progresso Geral: ${globalPercent}% (${completedTopics}/${totalTopics})`;
         container.innerHTML = html;
-        
+
         document.querySelectorAll('.topic-checkbox').forEach(cb => {
             cb.addEventListener('change', function() {
-                let subject = this.dataset.subject;
-                let topic = this.dataset.topic;
+                let subject = this.dataset.subject, topic = this.dataset.topic;
                 if (!checklistData[subject]) checklistData[subject] = {};
                 checklistData[subject][topic] = this.checked;
                 saveChecklist();
@@ -587,8 +565,7 @@
         });
         document.querySelectorAll('[data-timer-topic]').forEach(el => {
             el.addEventListener('click', function() {
-                let subject = this.dataset.subject;
-                let topic = this.dataset.topic;
+                let subject = this.dataset.subject, topic = this.dataset.topic;
                 currentTopic = { type: 'checklist', subject, topic };
                 document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${topic} (${subject})`;
                 startTimer();
@@ -596,13 +573,10 @@
         });
     }
 
-    // ========== CRONOGRAMA (APENAS MATÉRIAS) ==========
+    // ========== RENDER CRONOGRAMA ==========
     function renderFixedGrid() {
         let grid = document.getElementById('weeklyGrid');
-        if (!weekData) {
-            grid.innerHTML = '<div class="loading">Faça login para começar</div>';
-            return;
-        }
+        if (!weekData) { grid.innerHTML = '<div class="loading">Faça login</div>'; return; }
         grid.innerHTML = '';
         for (let [dayKey, day] of Object.entries(weekData)) {
             let completed = day.tasks.filter(t => t.completed).length;
@@ -635,10 +609,10 @@
             `;
             grid.appendChild(card);
         }
-        attachFixedEvents();
+        attachEvents();
     }
 
-    function attachFixedEvents() {
+    function attachEvents() {
         document.querySelectorAll('.task-checkbox').forEach(cb => {
             cb.onchange = () => {
                 let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
@@ -727,23 +701,16 @@
                     let data = JSON.parse(localStorage.getItem(key));
                     if (data) {
                         let total = 0;
-                        for (let day of Object.values(data)) {
-                            for (let task of day.tasks) {
-                                total += task.hours || 0;
-                            }
-                        }
+                        for (let day of Object.values(data))
+                            for (let task of day.tasks) total += task.hours || 0;
                         users[user] = (users[user] || 0) + total;
                     }
                 }
             }
         }
-        let ranking = Object.entries(users).map(([name, hours]) => ({ name, hours }));
-        ranking.sort((a,b) => b.hours - a.hours);
-        let html = ranking.length ? ranking.map((r,i) => `
-            <div class="ranking-item">
-                <span>${i+1}. ${r.name} ${r.name === currentUser ? '👑' : ''}</span>
-                <span>${r.hours.toFixed(1)}h</span>
-            </div>
+        let ranking = Object.entries(users).map(([n,h])=>({name:n, hours:h})).sort((a,b)=>b.hours-a.hours);
+        let html = ranking.length ? ranking.map((r,i)=>`
+            <div class="ranking-item"><span>${i+1}. ${r.name} ${r.name===currentUser?'👑':''}</span><span>${r.hours.toFixed(1)}h</span></div>
         `).join('') : '<div class="loading">Nenhum usuário ainda</div>';
         document.getElementById('rankingList').innerHTML = html;
     }
@@ -752,24 +719,22 @@
         let totalTasks = 0, completedTasks = 0;
         for (let day of Object.values(weekData)) {
             totalTasks += day.tasks.length;
-            completedTasks += day.tasks.filter(t => t.completed).length;
+            completedTasks += day.tasks.filter(t=>t.completed).length;
         }
-        let percent = totalTasks ? Math.round(completedTasks / totalTasks * 100) : 0;
-        document.getElementById('weeklyProgress').innerHTML = percent + '%';
-        document.getElementById('progressBarFill').style.width = percent + '%';
-        
+        let percent = totalTasks ? Math.round(completedTasks/totalTasks*100) : 0;
+        document.getElementById('weeklyProgress').innerHTML = percent+'%';
+        document.getElementById('progressBarFill').style.width = percent+'%';
         let today = new Date().getDay();
         let map = {0:'dom',1:'seg',2:'ter',3:'qua',4:'qui',5:'sex',6:'sab'};
         let todayKey = map[today];
         let todayHours = 0, weekHours = 0;
-        for (let [dayKey, day] of Object.entries(weekData)) {
+        for (let [dk, day] of Object.entries(weekData))
             for (let task of day.tasks) {
                 weekHours += task.hours;
-                if (dayKey === todayKey) todayHours += task.hours;
+                if (dk === todayKey) todayHours += task.hours;
             }
-        }
-        document.getElementById('todayTime').innerHTML = todayHours.toFixed(1) + 'h';
-        document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1) + 'h';
+        document.getElementById('todayTime').innerHTML = todayHours.toFixed(1)+'h';
+        document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1)+'h';
     }
 
     function startAutoRanking() {
@@ -782,42 +747,14 @@
         let h = Math.floor(timerSeconds/3600), m = Math.floor((timerSeconds%3600)/60), s = timerSeconds%60;
         document.getElementById('timerDisplay').innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     }
-
-    function startTimer() {
-        if (isRunning) return;
-        isRunning = true;
-        timerInterval = setInterval(() => {
-            timerSeconds++;
-            updateTimerDisplay();
-        }, 1000);
-    }
-
-    function pauseTimer() {
-        if (!isRunning) return;
-        isRunning = false;
-        clearInterval(timerInterval);
-    }
-
-    function resetTimer() {
-        if (confirm('Zerar o timer?')) {
-            pauseTimer();
-            timerSeconds = 0;
-            updateTimerDisplay();
-        }
-    }
-
+    function startTimer() { if (isRunning) return; isRunning = true; timerInterval = setInterval(()=>{ timerSeconds++; updateTimerDisplay(); }, 1000); }
+    function pauseTimer() { if (!isRunning) return; isRunning = false; clearInterval(timerInterval); }
+    function resetTimer() { if (confirm('Zerar o timer?')) { pauseTimer(); timerSeconds = 0; updateTimerDisplay(); } }
     function resetFixedWeek() {
-        if (confirm('Resetar todo o progresso da semana? As horas também serão zeradas.')) {
-            for (let day of Object.values(weekData)) {
-                for (let task of day.tasks) {
-                    task.completed = false;
-                    task.hours = 0;
-                }
-            }
-            saveFixedWeek();
-            renderFixedGrid();
-            updateRanking();
-            updateStats();
+        if (confirm('Resetar tudo?')) {
+            for (let day of Object.values(weekData))
+                for (let task of day.tasks) { task.completed = false; task.hours = 0; }
+            saveFixedWeek(); renderFixedGrid(); updateRanking(); updateStats();
         }
     }
 
@@ -829,14 +766,9 @@
         document.getElementById('currentUserDisplay').innerHTML = `👤 ${name}`;
         document.getElementById('rankingSection').style.display = 'block';
         document.getElementById('checklistSection').style.display = 'block';
-        
         loadChecklist();
-        if (Object.keys(checklistData).length === 0) {
-            checklistData = initChecklistData();
-            saveChecklist();
-        }
+        if (Object.keys(checklistData).length === 0) { checklistData = initChecklistData(); saveChecklist(); }
         renderChecklist();
-        
         loadFixedWeek();
         renderFixedGrid();
         updateRanking();
@@ -853,10 +785,7 @@
     document.getElementById('resetBtn').onclick = resetFixedWeek;
 
     let lastUser = localStorage.getItem('lastUser');
-    if (lastUser) {
-        document.getElementById('userNameInput').value = lastUser;
-        login();
-    }
+    if (lastUser) { document.getElementById('userNameInput').value = lastUser; login(); }
 </script>
 </body>
 </html>
