@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Planner ENEM - Planejamento por Semanas</title>
+    <title>Planner ENEM - Cronograma Fixo + Planejamento Semanal</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -19,7 +19,6 @@
         .header h1 { font-size: 2rem; background: linear-gradient(90deg, #e63946, #f1c40f); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .subtitle { color: #aaa; font-size: 0.9rem; }
         
-        /* User Section */
         .user-section {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -57,7 +56,6 @@
             border-radius: 30px;
         }
         
-        /* Ranking */
         .ranking-section {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -71,7 +69,6 @@
         .ranking-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
         .ranking-item { display: flex; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 12px; }
         
-        /* Timer */
         .timer-section {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -96,7 +93,6 @@
         .timer-btn.reset { background: #e74c3c; color: white; }
         .current-subject { margin-top: 15px; font-size: 1.2rem; color: #f1c40f; font-weight: bold; }
         
-        /* Metrics */
         .metrics {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -114,86 +110,37 @@
         .progress-bar-container { background: rgba(0,0,0,0.5); border-radius: 10px; height: 10px; margin-top: 10px; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #e63946, #f1c40f); transition: width 0.3s ease; }
         
-        /* PLANEJAMENTO DE SEMANAS */
-        .planner-section {
+        /* Seletor de semanas */
+        .week-navigation {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .planner-header {
+            padding: 15px 20px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f1c40f;
-        }
-        .planner-header h2 { color: #f1c40f; }
-        .week-selector {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .week-selector select, .week-selector button {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: none;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            cursor: pointer;
-        }
-        .week-selector button {
-            background: #e63946;
-        }
-        .subjects-input {
-            margin: 15px 0;
-        }
-        .subjects-input textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 15px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            font-size: 0.9rem;
-            font-family: monospace;
-        }
-        .config-row {
-            display: flex;
             gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-            margin: 15px 0;
         }
-        .config-row label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .config-row input {
-            padding: 5px 10px;
-            border-radius: 20px;
-            border: none;
+        .week-navigation select {
+            padding: 8px 15px;
+            border-radius: 25px;
             background: rgba(0,0,0,0.5);
             color: white;
-            width: 60px;
-            text-align: center;
+            border: none;
+            font-size: 1rem;
         }
-        .organize-btn {
+        .week-navigation button {
+            padding: 8px 20px;
+            border-radius: 25px;
             background: #2ecc71;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 30px;
             cursor: pointer;
-            font-weight: bold;
         }
         
-        /* CHECKLIST DE CONTEÚDOS */
+        /* Checklist da semana selecionada */
         .checklist-section {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -260,8 +207,14 @@
         .topic-name { flex: 1; font-size: 0.85rem; cursor: pointer; }
         .topic-name.completed { text-decoration: line-through; opacity: 0.7; }
         
-        /* Cronograma Semanal (visual opcional) */
-        .weekly-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; overflow-x: auto; margin-bottom: 30px; }
+        /* Cronograma fixo semanal (grade) */
+        .weekly-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
         .day-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -318,7 +271,7 @@
             background: rgba(255,255,255,0.1);
             border-radius: 20px;
         }
-        .focus-mode .ranking-section, .focus-mode .motivation, .focus-mode .metrics, .focus-mode .planner-section { display: none; }
+        .focus-mode .ranking-section, .focus-mode .motivation, .focus-mode .metrics, .focus-mode .week-navigation, .focus-mode .checklist-section { display: none; }
         .focus-mode .weekly-grid { grid-template-columns: 1fr; }
         
         @media (max-width: 1024px) { .weekly-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -333,7 +286,7 @@
 <div class="container">
     <div class="header">
         <h1>📚 Planner ENEM Medicina</h1>
-        <div class="subtitle">Planeje seus estudos por semanas | Timer + Ranking</div>
+        <div class="subtitle">Cronograma Fixo + Planejamento Semanal | Timer + Ranking</div>
     </div>
 
     <div class="user-section">
@@ -361,209 +314,233 @@
             <button class="timer-btn pause" id="pauseTimerBtn">⏸ Pausar</button>
             <button class="timer-btn reset" id="resetTimerBtn">⏹ Zerar</button>
         </div>
-        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome do tópico no checklist para estudar</div>
+        <div style="font-size: 0.7rem; margin-top: 10px;">💡 Clique no nome do tópico no checklist ou na grade para estudar</div>
     </div>
 
     <div class="metrics">
-        <div class="metric-card"><h3>🎯 Progresso</h3><div class="value" id="weeklyProgress">0%</div><div class="progress-bar-container"><div class="progress-bar" id="progressBarFill"></div></div></div>
+        <div class="metric-card"><h3>🎯 Progresso da Semana Fixa</h3><div class="value" id="weeklyProgress">0%</div><div class="progress-bar-container"><div class="progress-bar" id="progressBarFill"></div></div></div>
         <div class="metric-card"><h3>⏱️ Tempo Hoje</h3><div class="value" id="todayTime">0h</div></div>
         <div class="metric-card"><h3>📊 Total Semana</h3><div class="value" id="weeklyTime">0h</div></div>
     </div>
 
-    <!-- SEÇÃO DE PLANEJAMENTO -->
-    <div class="planner-section" id="plannerSection" style="display: none;">
-        <div class="planner-header">
-            <h2>📅 Planejamento de Estudos</h2>
-            <div class="week-selector">
-                <label>Semana:</label>
-                <select id="weekSelect"></select>
-                <button id="addWeekBtn">+ Nova Semana</button>
-            </div>
-        </div>
-        <div class="subjects-input">
-            <textarea id="subjectsList" rows="4" placeholder="Cole aqui os assuntos que deseja estudar (um por linha)&#10;Exemplo:&#10;Transformações de Gráficos&#10;Estudo dos Sinais da Função&#10;Inequação do Primeiro Grau"></textarea>
-        </div>
-        <div class="config-row">
-            <label>📆 Dias por semana: <input type="number" id="daysPerWeek" min="1" max="7" value="5"></label>
-            <label>⏱️ Tópicos por dia: <input type="number" id="topicsPerDay" min="1" max="10" value="4"></label>
-            <button class="organize-btn" id="organizeBtn">✨ Organizar em Semanas</button>
-        </div>
-        <div style="font-size: 0.8rem; color: #aaa; margin-top: 10px;">Os tópicos serão distribuídos igualmente pelas semanas. Você pode criar várias semanas e alternar entre elas.</div>
+    <!-- Navegação entre semanas (para o checklist extra) -->
+    <div class="week-navigation" id="weekNav" style="display: none;">
+        <span>📅 Lista de estudos extras:</span>
+        <select id="weekSelect"></select>
+        <button id="addWeekBtn">➕ Nova Semana</button>
     </div>
 
-    <!-- CHECKLIST DA SEMANA SELECIONADA -->
+    <!-- Checklist da semana selecionada (extra) -->
     <div class="checklist-section" id="checklistSection" style="display: none;">
         <div class="checklist-header">
-            <h2>📋 Checklist da Semana <span id="currentWeekLabel"></span></h2>
+            <h2>📋 <span id="currentWeekLabel"></span></h2>
             <div class="global-progress" id="globalProgress">Progresso: 0%</div>
         </div>
         <div id="checklistContainer"></div>
     </div>
 
+    <!-- CRONOGRAMA FIXO SEMANAL -->
     <div class="weekly-grid" id="weeklyGrid"><div class="loading">Faça login</div></div>
-    <button class="reset-btn" id="resetBtn">🔄 Resetar Progresso da Semana</button>
+    <button class="reset-btn" id="resetBtn">🔄 Resetar Progresso da Semana Fixa</button>
     <div class="motivation">🎯 Medicina na Federal ou Estadual<br>Consistência + Disciplina = Aprovação! 💪</div>
 </div>
 
 <script>
-    // ========== GESTÃO DE SEMANAS ==========
+    // ========== CRONOGRAMA FIXO (original) ==========
+    const fixedSchedule = {
+        seg: { name: "SEGUNDA", foco: "📐 Matemática + ⚡ Física", tasks: [
+            "📐 Matemática: Transformações de Gráficos",
+            "📐 Matemática: Estudo dos Sinais da Função",
+            "📐 Matemática: Inequações",
+            "⚡ Física: Polias e Estática"
+        ] },
+        ter: { name: "TERÇA", foco: "🧬 Biologia + 🧪 Química", tasks: [
+            "🧬 Biologia: Citoplasma e Organelas",
+            "🧪 Química: Ácidos e Bases"
+        ] },
+        qua: { name: "QUARTA", foco: "📜 História + 📖 Literatura + 📝 Português", tasks: [
+            "📜 História: Navegações e Reforma",
+            "📖 Literatura: Arcadismo",
+            "📝 Português: Verbos"
+        ] },
+        qui: { name: "QUINTA", foco: "🌍 Geografia + 🏛️ Sociologia", tasks: [
+            "🌍 Geografia: Climas do Brasil e Hidrografia",
+            "🏛️ Sociologia: Diversidade Cultural e Relativismo"
+        ] },
+        sex: { name: "SEXTA", foco: "🧠 Filosofia + Revisão", tasks: [
+            "🧠 Filosofia: Medieval, Agostinho, Tomás de Aquino",
+            "🔄 Revisão dos conteúdos da semana"
+        ] },
+        sab: { name: "SÁBADO", foco: "📝 Exercícios e Simulado", tasks: [
+            "📝 Resolução de exercícios",
+            "📝 Simulado dos conteúdos estudados"
+        ] },
+        dom: { name: "DOMINGO", foco: "🔄 Revisão Leve", tasks: [
+            "🔄 Revisão dos pontos mais difíceis",
+            "📋 Planejamento da próxima semana"
+        ] }
+    };
+
+    // Conteúdos da Semana 8 (excluindo Redação, Atualidades, Espanhol, Inglês)
+    const semana8Topics = [
+        "📜 História: As Grandes Navegações",
+        "📜 História: Reforma Protestante I",
+        "📜 História: A Reforma Protestante II",
+        "📜 História: Arte no Renascimento",
+        "📖 Literatura: Arcadismo",
+        "📝 Português: Transitividade Verbal",
+        "📝 Português: Tempos verbais e sentido",
+        "📝 Português: Verbos Regulares e Irregulares",
+        "📝 Português: Verbos de Ligação x Verbos Significativos",
+        "📐 Matemática: Transformações de Gráficos",
+        "📐 Matemática: Estudo dos Sinais da Função",
+        "📐 Matemática: Inequação do Primeiro Grau",
+        "📐 Matemática: Inequação do Segundo Grau",
+        "📐 Matemática: Problemas com Inequações",
+        "📐 Matemática: Inequação Produto",
+        "📐 Matemática: Inequação Quociente",
+        "📐 Matemática: Sistemas de Inequações",
+        "🧪 Química: Classificação dos Ácidos",
+        "🧪 Química: Força dos Ácidos",
+        "🧪 Química: Nomenclatura dos Ácidos",
+        "🧪 Química: Bases",
+        "🧪 Química: Teorias Ácido-Base",
+        "🧪 Química: Resolução de Exercícios - Nomenclatura de Ácidos e Bases",
+        "⚡ Física: Polias I",
+        "⚡ Física: Polias II",
+        "⚡ Física: Força Elástica",
+        "⚡ Física: Estática do Ponto Material",
+        "⚡ Física: Centro de Massa",
+        "⚡ Física: Estática do Corpo Extenso",
+        "⚡ Física: Associação de Molas",
+        "⚡ Física: Elevadores",
+        "⚡ Física: Tombamento I",
+        "⚡ Física: Tombamento II",
+        "⚡ Física: Escorregamento",
+        "🧬 Biologia: Citoplasma: Características",
+        "🧬 Biologia: Ribossomos",
+        "🧬 Biologia: Retículos Endoplasmáticos",
+        "🧬 Biologia: Aparelho de Golgi e Secreção Celular",
+        "🧬 Biologia: Lisossomos e Digestão Celular",
+        "🧬 Biologia: Peroxissomos, Glioxissomos e Vacúolos",
+        "🧬 Biologia: Citoesqueleto e Centríolos",
+        "🌍 Geografia: Climas do Brasil - Tropical Típico e Semiárido",
+        "🌍 Geografia: Climas do Brasil - Tropical Úmido e Equatorial",
+        "🌍 Geografia: Climas do Brasil - Tropical de Altitude e Subtropical",
+        "🌍 Geografia: Oceanos e Mares",
+        "🌍 Geografia: Rios",
+        "🌍 Geografia: Usos da Água I",
+        "🌍 Geografia: Usos da Água II",
+        "🏛️ Sociologia: Diversidade Cultural",
+        "🏛️ Sociologia: Relativismo I - O método etnográfico",
+        "🏛️ Sociologia: Relativismo II - A proposta estruturalista",
+        "🏛️ Sociologia: Relativismo II - O método comparativo-estruturalista",
+        "🧠 Filosofia: Formação da Filosofia Medieval",
+        "🧠 Filosofia: Santo Agostinho de Hipona",
+        "🧠 Filosofia: São Tomás de Aquino"
+    ];
+
+    // ========== VARIÁVEIS GLOBAIS ==========
     let currentUser = null;
-    let weeksData = {};      // { "Semana 1": { topics: ["t1","t2"], progress: { "t1": false, ... } }, ... }
-    let currentWeek = null;   // nome da semana selecionada
-    let weekCounter = 1;
+    let weeksData = {};          // { "Semana 8": { topics: [], progress: {} }, ... }
+    let currentWeek = null;      // nome da semana selecionada
+    let weekCounter = 1;          // para novas semanas
+    let weekData = {};            // dados do cronograma fixo (tarefas diárias)
     
     let timerInterval = null, timerSeconds = 0, isRunning = false, currentTopic = null;
     let rankingInterval = null;
     
-    // Cronograma semanal fixo (pode ser editado depois)
-    const weekSchedule = {
-        seg: { name: "SEGUNDA", foco: "Estudos", tasks: [] },
-        ter: { name: "TERÇA", foco: "Estudos", tasks: [] },
-        qua: { name: "QUARTA", foco: "Estudos", tasks: [] },
-        qui: { name: "QUINTA", foco: "Estudos", tasks: [] },
-        sex: { name: "SEXTA", foco: "Estudos", tasks: [] },
-        sab: { name: "SÁBADO", foco: "Revisão", tasks: [] },
-        dom: { name: "DOMINGO", foco: "Descanso", tasks: [] }
-    };
-    let weekData = JSON.parse(JSON.stringify(weekSchedule));
-    
-    // ========== FUNÇÕES DE PERSISTÊNCIA ==========
-    function saveAllData() {
-        if (!currentUser) return;
-        localStorage.setItem(`weeks_${currentUser}`, JSON.stringify(weeksData));
-        localStorage.setItem(`currentWeek_${currentUser}`, currentWeek);
-        localStorage.setItem(`weekCounter_${currentUser}`, weekCounter);
-        localStorage.setItem(`planner_${currentUser}_current`, JSON.stringify(weekData));
+    // ========== INICIALIZAÇÃO ==========
+    function initFixedWeek() {
+        let data = {};
+        for (let [key, day] of Object.entries(fixedSchedule)) {
+            data[key] = {
+                name: day.name,
+                foco: day.foco,
+                tasks: day.tasks.map(t => ({ name: t, completed: false, topic: "", hours: 0 }))
+            };
+        }
+        return data;
     }
     
-    function loadAllData() {
+    // Criar Semana 8 predefinida
+    function createSemana8() {
+        let progress = {};
+        semana8Topics.forEach(t => { progress[t] = false; });
+        return { topics: [...semana8Topics], progress: progress };
+    }
+    
+    // Salvar semanas extras
+    function saveWeeksData() {
+        if (currentUser) {
+            localStorage.setItem(`weeks_${currentUser}`, JSON.stringify(weeksData));
+            localStorage.setItem(`currentWeek_${currentUser}`, currentWeek);
+        }
+    }
+    
+    function loadWeeksData() {
         if (!currentUser) return;
-        let savedWeeks = localStorage.getItem(`weeks_${currentUser}`);
-        if (savedWeeks) {
-            weeksData = JSON.parse(savedWeeks);
-            weekCounter = parseInt(localStorage.getItem(`weekCounter_${currentUser}`)) || Object.keys(weeksData).length + 1;
+        let saved = localStorage.getItem(`weeks_${currentUser}`);
+        if (saved) {
+            weeksData = JSON.parse(saved);
             currentWeek = localStorage.getItem(`currentWeek_${currentUser}`);
             if (!currentWeek || !weeksData[currentWeek]) {
                 let weeks = Object.keys(weeksData);
                 if (weeks.length) currentWeek = weeks[0];
+                else currentWeek = null;
             }
         } else {
-            weeksData = {};
-            weekCounter = 1;
-            currentWeek = null;
+            weeksData = { "Semana 8": createSemana8() };
+            currentWeek = "Semana 8";
+            weekCounter = 9; // próxima será Semana 9
+            saveWeeksData();
         }
-        
-        let savedPlanner = localStorage.getItem(`planner_${currentUser}_current`);
-        if (savedPlanner) weekData = JSON.parse(savedPlanner);
-        else weekData = JSON.parse(JSON.stringify(weekSchedule));
     }
     
-    function saveWeekData() {
+    // Salvar cronograma fixo
+    function saveFixedWeek() {
         if (currentUser) {
-            localStorage.setItem(`planner_${currentUser}_current`, JSON.stringify(weekData));
+            localStorage.setItem(`fixed_${currentUser}`, JSON.stringify(weekData));
         }
     }
     
-    // ========== DISTRIBUIÇÃO DE TÓPICOS EM SEMANAS ==========
-    function organizeIntoSemanas() {
-        let rawText = document.getElementById('subjectsList').value;
-        let topics = rawText.split(/\r?\n/).filter(t => t.trim().length > 0);
-        if (topics.length === 0) {
-            alert("Digite ou cole os assuntos primeiro!");
-            return;
-        }
-        
-        let daysPerWeek = parseInt(document.getElementById('daysPerWeek').value);
-        let topicsPerDay = parseInt(document.getElementById('topicsPerDay').value);
-        
-        let totalTopics = topics.length;
-        let topicsPerWeek = daysPerWeek * topicsPerDay;
-        let numWeeks = Math.ceil(totalTopics / topicsPerWeek);
-        
-        let newWeeks = {};
-        for (let i = 0; i < numWeeks; i++) {
-            let weekName = `Semana ${weekCounter + i}`;
-            let start = i * topicsPerWeek;
-            let end = Math.min(start + topicsPerWeek, totalTopics);
-            let weekTopics = topics.slice(start, end);
-            let progress = {};
-            weekTopics.forEach(t => { progress[t] = false; });
-            newWeeks[weekName] = { topics: weekTopics, progress: progress };
-        }
-        
-        // Mesclar com semanas existentes (não sobrescrever semanas já existentes com mesmo nome)
-        for (let name in newWeeks) {
-            if (!weeksData[name]) {
-                weeksData[name] = newWeeks[name];
+    function loadFixedWeek() {
+        if (currentUser) {
+            let saved = localStorage.getItem(`fixed_${currentUser}`);
+            if (saved) {
+                weekData = JSON.parse(saved);
+            } else {
+                weekData = initFixedWeek();
+                saveFixedWeek();
             }
         }
-        
-        weekCounter += numWeeks;
-        if (!currentWeek || !weeksData[currentWeek]) {
-            currentWeek = Object.keys(weeksData)[0];
-        }
-        
-        saveAllData();
-        updateWeekSelect();
-        renderCurrentChecklist();
-        updateStats();
-    }
-    
-    function updateWeekSelect() {
-        let select = document.getElementById('weekSelect');
-        select.innerHTML = '';
-        for (let week in weeksData) {
-            let option = document.createElement('option');
-            option.value = week;
-            option.textContent = week;
-            if (week === currentWeek) option.selected = true;
-            select.appendChild(option);
-        }
-        select.onchange = () => {
-            currentWeek = select.value;
-            saveAllData();
-            renderCurrentChecklist();
-        };
-        document.getElementById('currentWeekLabel').innerText = currentWeek || '';
-    }
-    
-    function addNewWeek() {
-        let newWeekName = `Semana ${weekCounter}`;
-        weeksData[newWeekName] = { topics: [], progress: {} };
-        weekCounter++;
-        if (!currentWeek) currentWeek = newWeekName;
-        saveAllData();
-        updateWeekSelect();
-        renderCurrentChecklist();
     }
     
     // ========== RENDERIZAÇÃO DO CHECKLIST DA SEMANA ATUAL ==========
     function renderCurrentChecklist() {
         let container = document.getElementById('checklistContainer');
         if (!currentWeek || !weeksData[currentWeek]) {
-            container.innerHTML = '<div class="loading">Nenhuma semana selecionada. Use o planejador acima para criar semanas.</div>';
+            container.innerHTML = '<div class="loading">Selecione uma semana no menu acima.</div>';
             return;
         }
         
         let week = weeksData[currentWeek];
         let topics = week.topics;
         let progress = week.progress;
-        
         let total = topics.length;
         let completed = Object.values(progress).filter(v => v === true).length;
         let percent = total ? Math.round(completed / total * 100) : 0;
         document.getElementById('globalProgress').innerHTML = `📊 Progresso: ${percent}% (${completed}/${total})`;
         
         if (topics.length === 0) {
-            container.innerHTML = '<div class="loading">Nenhum tópico nesta semana. Use o planejador para adicionar.</div>';
+            container.innerHTML = '<div class="loading">Nenhum tópico nesta semana. Adicione usando o botão "Nova Semana" ou edite.</div>';
             return;
         }
         
-        // Agrupar por matéria? Vamos apenas listar em ordem.
         let html = `
             <div class="subject-group">
                 <div class="subject-title">
-                    <span>📚 Tópicos da semana</span>
+                    <span>📚 Tópicos</span>
                     <span class="subject-progress">${completed}/${total} (${percent}%)</span>
                 </div>
                 <div class="topics-list">
@@ -587,7 +564,7 @@
                 let topic = this.dataset.topic;
                 if (weeksData[currentWeek].progress[topic] !== undefined) {
                     weeksData[currentWeek].progress[topic] = this.checked;
-                    saveAllData();
+                    saveWeeksData();
                     renderCurrentChecklist();
                     updateStats();
                 }
@@ -603,12 +580,126 @@
         });
     }
     
-    // ========== FUNÇÕES DO CRONOGRAMA SEMANAL (mantido) ==========
+    // ========== FUNÇÕES DO CRONOGRAMA FIXO ==========
+    function renderFixedGrid() {
+        let grid = document.getElementById('weeklyGrid');
+        if (!weekData) {
+            grid.innerHTML = '<div class="loading">Faça login para começar</div>';
+            return;
+        }
+        grid.innerHTML = '';
+        for (let [dayKey, day] of Object.entries(weekData)) {
+            let completed = day.tasks.filter(t => t.completed).length;
+            let card = document.createElement('div');
+            card.className = 'day-card';
+            card.innerHTML = `
+                <div class="day-header">
+                    <span class="day-name">${day.name}</span>
+                    <span class="day-completed">${completed}/${day.tasks.length} concluído</span>
+                </div>
+                <div style="font-size:0.7rem; margin-bottom:10px; color:#f1c40f;">${day.foco}</div>
+                ${day.tasks.map((task, idx) => `
+                    <div class="task-item ${task.completed ? 'completed' : ''}">
+                        <div class="task-header">
+                            <input type="checkbox" class="task-checkbox" data-day="${dayKey}" data-idx="${idx}" ${task.completed ? 'checked' : ''}>
+                            <span class="task-name" data-day="${dayKey}" data-idx="${idx}" data-timer-task>${task.name}</span>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:20px; padding:2px 8px; cursor:pointer;">🗑️</button>
+                        </div>
+                        <div class="hours-studied">
+                            <span>⏱️ Horas: ${task.hours.toFixed(1)}h</span>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5h</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1h</button>
+                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="2">+2h</button>
+                        </div>
+                        <div class="task-topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Clique para adicionar anotações..."}</div>
+                    </div>
+                `).join('')}
+                <button class="add-subject-btn" data-day="${dayKey}">+ Adicionar Tópico</button>
+            `;
+            grid.appendChild(card);
+        }
+        attachFixedEvents();
+    }
+    
+    function attachFixedEvents() {
+        document.querySelectorAll('.task-checkbox').forEach(cb => {
+            cb.onchange = () => {
+                let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
+                weekData[day].tasks[idx].completed = cb.checked;
+                saveFixedWeek();
+                renderFixedGrid();
+                updateStats();
+            };
+        });
+        document.querySelectorAll('[data-timer-task]').forEach(el => {
+            el.onclick = () => {
+                let day = el.dataset.day, idx = parseInt(el.dataset.idx);
+                let taskName = weekData[day].tasks[idx].name;
+                currentTopic = { type: 'fixed', day, idx, name: taskName };
+                document.getElementById('currentSubject').innerHTML = `📖 Estudando: ${taskName}`;
+                startTimer();
+            };
+        });
+        document.querySelectorAll('[data-delete]').forEach(btn => {
+            btn.onclick = () => {
+                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
+                if (confirm('Remover este tópico?')) {
+                    weekData[day].tasks.splice(idx, 1);
+                    saveFixedWeek();
+                    renderFixedGrid();
+                }
+            };
+        });
+        document.querySelectorAll('[data-hours]').forEach(btn => {
+            btn.onclick = () => {
+                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
+                let hours = parseFloat(btn.dataset.hours);
+                weekData[day].tasks[idx].hours += hours;
+                saveFixedWeek();
+                renderFixedGrid();
+                updateRanking();
+                updateStats();
+            };
+        });
+        document.querySelectorAll('.add-subject-btn').forEach(btn => {
+            btn.onclick = () => {
+                let day = btn.dataset.day;
+                let name = prompt('Digite o nome do tópico:');
+                if (name) {
+                    weekData[day].tasks.push({ name, completed: false, topic: "", hours: 0 });
+                    saveFixedWeek();
+                    renderFixedGrid();
+                }
+            };
+        });
+        document.querySelectorAll('.task-topic').forEach(topic => {
+            topic.onclick = function() {
+                let day = this.dataset.day, idx = parseInt(this.dataset.idx);
+                let input = document.createElement('input');
+                input.value = weekData[day].tasks[idx].topic || '';
+                input.style.width = '100%';
+                input.style.padding = '4px';
+                input.style.borderRadius = '8px';
+                input.style.background = 'rgba(255,255,255,0.2)';
+                input.style.color = 'white';
+                input.style.border = 'none';
+                this.replaceWith(input);
+                input.focus();
+                input.onblur = () => {
+                    weekData[day].tasks[idx].topic = input.value;
+                    saveFixedWeek();
+                    renderFixedGrid();
+                };
+            };
+        });
+    }
+    
+    // ========== RANKING E ESTATÍSTICAS ==========
     function updateRanking() {
         let users = {};
         for (let i = 0; i < localStorage.length; i++) {
             let key = localStorage.key(i);
-            if (key && key.startsWith('planner_') && key.endsWith('_current')) {
+            if (key && key.startsWith('fixed_')) {
                 let user = key.split('_')[1];
                 if (user) {
                     let data = JSON.parse(localStorage.getItem(key));
@@ -635,143 +726,38 @@
         document.getElementById('rankingList').innerHTML = html;
     }
     
-    function startAutoRanking() {
-        if (rankingInterval) clearInterval(rankingInterval);
-        rankingInterval = setInterval(() => { if (currentUser) updateRanking(); }, 3000);
-    }
-    
     function updateStats() {
-        // Métricas baseadas no progresso da semana atual
-        if (currentWeek && weeksData[currentWeek]) {
-            let total = weeksData[currentWeek].topics.length;
-            let completed = Object.values(weeksData[currentWeek].progress).filter(v => v === true).length;
-            let percent = total ? Math.round(completed / total * 100) : 0;
-            document.getElementById('weeklyProgress').innerHTML = percent + '%';
-            document.getElementById('progressBarFill').style.width = percent + '%';
-        } else {
-            document.getElementById('weeklyProgress').innerHTML = '0%';
-            document.getElementById('progressBarFill').style.width = '0%';
+        // Progresso da semana fixa
+        let totalTasks = 0, completedTasks = 0;
+        for (let day of Object.values(weekData)) {
+            totalTasks += day.tasks.length;
+            completedTasks += day.tasks.filter(t => t.completed).length;
         }
+        let percent = totalTasks ? Math.round(completedTasks / totalTasks * 100) : 0;
+        document.getElementById('weeklyProgress').innerHTML = percent + '%';
+        document.getElementById('progressBarFill').style.width = percent + '%';
         
-        // Horas: buscar do cronograma semanal
+        // Horas de hoje e da semana
         let today = new Date().getDay();
         let map = {0:'dom',1:'seg',2:'ter',3:'qua',4:'qui',5:'sex',6:'sab'};
         let todayKey = map[today];
         let todayHours = 0, weekHours = 0;
-        for (let day of Object.values(weekData)) {
+        for (let [dayKey, day] of Object.entries(weekData)) {
             for (let task of day.tasks) {
-                weekHours += task.hours || 0;
-                if (day.name.toLowerCase().startsWith(todayKey.substring(0,3))) todayHours += task.hours || 0;
+                weekHours += task.hours;
+                if (dayKey === todayKey) todayHours += task.hours;
             }
         }
         document.getElementById('todayTime').innerHTML = todayHours.toFixed(1) + 'h';
         document.getElementById('weeklyTime').innerHTML = weekHours.toFixed(1) + 'h';
     }
     
-    function renderWeekGrid() {
-        let grid = document.getElementById('weeklyGrid');
-        if (!weekData) {
-            grid.innerHTML = '<div class="loading">Faça login para começar</div>';
-            return;
-        }
-        grid.innerHTML = '';
-        for (let [dayKey, day] of Object.entries(weekData)) {
-            let completed = day.tasks.filter(t => t.completed).length;
-            let card = document.createElement('div');
-            card.className = 'day-card';
-            card.innerHTML = `
-                <div class="day-header">
-                    <span class="day-name">${day.name}</span>
-                    <span class="day-completed">${completed}/${day.tasks.length} concluído</span>
-                </div>
-                <div style="font-size:0.7rem; margin-bottom:10px; color:#f1c40f;">${day.foco}</div>
-                ${day.tasks.map((task, idx) => `
-                    <div class="task-item ${task.completed ? 'completed' : ''}">
-                        <div class="task-header">
-                            <input type="checkbox" class="task-checkbox" data-day="${dayKey}" data-idx="${idx}" ${task.completed ? 'checked' : ''}>
-                            <span class="task-name">${task.name}</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-delete style="background:#e74c3c; border:none; color:white; border-radius:20px; padding:2px 8px; cursor:pointer;">🗑️</button>
-                        </div>
-                        <div class="hours-studied">
-                            <span>⏱️ Horas: ${task.hours.toFixed(1)}h</span>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="0.5">+0.5h</button>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="1">+1h</button>
-                            <button data-day="${dayKey}" data-idx="${idx}" data-hours="2">+2h</button>
-                        </div>
-                        <div class="task-topic" data-day="${dayKey}" data-idx="${idx}">${task.topic || "✏️ Clique para adicionar anotações..."}</div>
-                    </div>
-                `).join('')}
-                <button class="add-subject-btn" data-day="${dayKey}">+ Adicionar Tópico</button>
-            `;
-            grid.appendChild(card);
-        }
-        attachWeekEvents();
+    function startAutoRanking() {
+        if (rankingInterval) clearInterval(rankingInterval);
+        rankingInterval = setInterval(() => { if (currentUser) updateRanking(); }, 5000);
     }
     
-    function attachWeekEvents() {
-        document.querySelectorAll('.task-checkbox').forEach(cb => {
-            cb.onchange = () => {
-                let day = cb.dataset.day, idx = parseInt(cb.dataset.idx);
-                weekData[day].tasks[idx].completed = cb.checked;
-                saveWeekData();
-                renderWeekGrid();
-            };
-        });
-        document.querySelectorAll('[data-delete]').forEach(btn => {
-            btn.onclick = () => {
-                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
-                if (confirm('Remover?')) {
-                    weekData[day].tasks.splice(idx, 1);
-                    saveWeekData();
-                    renderWeekGrid();
-                }
-            };
-        });
-        document.querySelectorAll('[data-hours]').forEach(btn => {
-            btn.onclick = () => {
-                let day = btn.dataset.day, idx = parseInt(btn.dataset.idx);
-                let hours = parseFloat(btn.dataset.hours);
-                weekData[day].tasks[idx].hours += hours;
-                saveWeekData();
-                renderWeekGrid();
-                updateRanking();
-                updateStats();
-            };
-        });
-        document.querySelectorAll('.add-subject-btn').forEach(btn => {
-            btn.onclick = () => {
-                let day = btn.dataset.day;
-                let name = prompt('Digite o nome do tópico:');
-                if (name) {
-                    weekData[day].tasks.push({ name, completed: false, topic: "", hours: 0 });
-                    saveWeekData();
-                    renderWeekGrid();
-                }
-            };
-        });
-        document.querySelectorAll('.task-topic').forEach(topic => {
-            topic.onclick = function() {
-                let day = this.dataset.day, idx = parseInt(this.dataset.idx);
-                let input = document.createElement('input');
-                input.value = weekData[day].tasks[idx].topic || '';
-                input.style.width = '100%';
-                input.style.padding = '4px';
-                input.style.borderRadius = '8px';
-                input.style.background = 'rgba(255,255,255,0.2)';
-                input.style.color = 'white';
-                input.style.border = 'none';
-                this.replaceWith(input);
-                input.focus();
-                input.onblur = () => {
-                    weekData[day].tasks[idx].topic = input.value;
-                    saveWeekData();
-                    renderWeekGrid();
-                };
-            };
-        });
-    }
-    
-    // Timer
+    // ========== TIMER ==========
     function updateTimerDisplay() {
         let h = Math.floor(timerSeconds/3600), m = Math.floor((timerSeconds%3600)/60), s = timerSeconds%60;
         document.getElementById('timerDisplay').innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
@@ -783,6 +769,7 @@
         timerInterval = setInterval(() => {
             timerSeconds++;
             updateTimerDisplay();
+            // Não adiciona horas automaticamente, apenas contabiliza para o usuário
         }, 1000);
     }
     
@@ -800,36 +787,70 @@
         }
     }
     
-    function resetWeek() {
-        if (confirm('Resetar todo o progresso da semana?')) {
-            for (let day in weekData) {
-                for (let task of weekData[day].tasks) {
+    function resetFixedWeek() {
+        if (confirm('Resetar todo o progresso da semana fixa? As horas também serão zeradas.')) {
+            for (let day of Object.values(weekData)) {
+                for (let task of day.tasks) {
                     task.completed = false;
                     task.hours = 0;
                 }
             }
-            saveWeekData();
-            renderWeekGrid();
+            saveFixedWeek();
+            renderFixedGrid();
             updateRanking();
             updateStats();
         }
     }
     
+    // ========== GERENCIAMENTO DE SEMANAS EXTRAS ==========
+    function updateWeekSelect() {
+        let select = document.getElementById('weekSelect');
+        select.innerHTML = '';
+        for (let week in weeksData) {
+            let option = document.createElement('option');
+            option.value = week;
+            option.textContent = week;
+            if (week === currentWeek) option.selected = true;
+            select.appendChild(option);
+        }
+        select.onchange = () => {
+            currentWeek = select.value;
+            saveWeeksData();
+            renderCurrentChecklist();
+            document.getElementById('currentWeekLabel').innerText = currentWeek;
+        };
+        document.getElementById('currentWeekLabel').innerText = currentWeek || '';
+    }
+    
+    function addNewWeek() {
+        let newWeekName = `Semana ${weekCounter}`;
+        weeksData[newWeekName] = { topics: [], progress: {} };
+        weekCounter++;
+        if (!currentWeek) currentWeek = newWeekName;
+        saveWeeksData();
+        updateWeekSelect();
+        renderCurrentChecklist();
+        alert(`Semana ${newWeekName} criada! Você pode adicionar tópicos editando manualmente ou usando o planejador automático (se quiser, posso adicionar depois).`);
+    }
+    
+    // ========== LOGIN ==========
     function login() {
         let name = document.getElementById('userNameInput').value.trim();
         if (!name) return alert('Digite seu nome!');
         currentUser = name;
         document.getElementById('currentUserDisplay').innerHTML = `👤 ${name}`;
         document.getElementById('rankingSection').style.display = 'block';
-        document.getElementById('plannerSection').style.display = 'block';
+        document.getElementById('weekNav').style.display = 'flex';
         document.getElementById('checklistSection').style.display = 'block';
         
-        loadAllData();
+        loadWeeksData();
+        loadFixedWeek();
         updateWeekSelect();
         renderCurrentChecklist();
-        renderWeekGrid();
+        renderFixedGrid();
         updateRanking();
         startAutoRanking();
+        updateStats();
         localStorage.setItem('lastUser', name);
     }
     
@@ -838,8 +859,7 @@
     document.getElementById('startTimerBtn').onclick = startTimer;
     document.getElementById('pauseTimerBtn').onclick = pauseTimer;
     document.getElementById('resetTimerBtn').onclick = resetTimer;
-    document.getElementById('resetBtn').onclick = resetWeek;
-    document.getElementById('organizeBtn').onclick = organizeIntoSemanas;
+    document.getElementById('resetBtn').onclick = resetFixedWeek;
     document.getElementById('addWeekBtn').onclick = addNewWeek;
     
     let lastUser = localStorage.getItem('lastUser');
